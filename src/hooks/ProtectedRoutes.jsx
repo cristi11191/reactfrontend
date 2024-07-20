@@ -22,6 +22,7 @@ const ProtectedRoutes = ({ element, roles }) => {
         getUserRole();
     }, []);
 
+
     if (loading) {
         return <div>Loading...</div>; // Or a loading spinner
     }
