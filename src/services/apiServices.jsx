@@ -27,13 +27,32 @@ const refreshToken = async () => {
 
 // Interceptor to check and refresh token before requests
 // Network error handler
-const handleNetworkError = (error) => {
-    Notification({ message: 'Network Error: Please check your internet connection or try again later.', type: 'error' });
-    return Promise.reject({ message: 'Network Error: Please check your internet connection or try again later.', ...error });
+const handleNetworkError = () => {
+    let errorMessage = 'Network Error: Something went wrong, please try again later.';
+
+
+    return Promise.reject(new Error(errorMessage));
 };
 
+
+
 // 401 Unauthorized error handler
-const handleUnauthorizedError = async (originalRequest) => {
+const errorsToBypassRefresh = [
+    'Invalid credentials',
+    'User not found',
+    'Account locked',
+    'Password expired',
+    'Token revoked',
+];
+const handleUnauthorizedError = async (originalRequest, errorResponse) => {
+    const errorMessage = errorResponse?.response?.data?.error;
+
+    // Check if the error message is in the list of errors to bypass refresh
+    if (errorsToBypassRefresh.includes(errorMessage)) {
+        return Promise.reject(new Error(`Unauthorized: ${errorMessage}`));
+    }
+
+    // Proceed with token refresh only if it's not in the list of bypass errors
     if (!originalRequest._retry) {
         originalRequest._retry = true;
         try {
@@ -46,6 +65,7 @@ const handleUnauthorizedError = async (originalRequest) => {
             return Promise.reject(new Error('Unauthorized: Invalid credentials.'));
         }
     }
+
     return Promise.reject(new Error('Unauthorized: Invalid credentials.'));
 };
 
@@ -59,29 +79,38 @@ const handleForbiddenError = (error) => {
 
 // Response interceptor
 axiosInstance.interceptors.response.use(
-
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+        console.log("Eroare primita in response " ,error);
 
+        // Handle network errors (e.g., backend is offline)
         if (!error.response) {
             return handleNetworkError(error);
         }
 
+        // Handle unauthorized errors
         if (error.response.status === 401) {
-            return handleUnauthorizedError(originalRequest);
+            return handleUnauthorizedError(originalRequest, error);
         }
 
-
+        // Handle forbidden errors
         if (error.response.status === 403) {
             return handleForbiddenError(error);
         }
+
+        // Handle server errors (5xx)
         if (error.response.status >= 500) {
             return Promise.reject({ message: 'Server Error: Please try again later.', ...error });
         }
-        return Promise.reject(error); // Reject other errors
+
+        // Reject other errors
+        return Promise.reject(error);
     }
 );
+
+
+
 
 // Add token to each request if exists
 axiosInstance.interceptors.request.use(async (config) => {
@@ -97,7 +126,9 @@ axiosInstance.interceptors.request.use(async (config) => {
 export const login = async (email, password) => {
     // eslint-disable-next-line no-useless-catch
     try {
+
         const response = await axiosInstance.post('login', { email, password });
+        // eslint-disable-next-line no-debugger
         const token = response.data.token;
         if(token && response.status === 200){
             localStorage.setItem('token', response.data.token);
@@ -115,10 +146,14 @@ export const login = async (email, password) => {
 export const fetchCurrentUser = async () => {
     try {
         const response = await axiosInstance.get('current-user');
-        localStorage.setItem('role', response.data.user.role);
-        localStorage.setItem('permissions', JSON.stringify(response.data.user.permissions));
-        return response.data;
+        const user = response.data.user;
+
+        localStorage.setItem('role', user.role.name);
+        localStorage.setItem('permissions', JSON.stringify(user.role.permissions));
+
+        return user;
     } catch (error) {
+        console.error('Error fetching current user:', error);
         throw error;
     }
 };

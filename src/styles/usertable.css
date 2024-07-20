@@ -1,0 +1,37 @@
+
+.tableusers{
+    width: 70vw !important;
+    margin-top: 60px;
+    margin-left: 30px;
+}
+
+
+body .tableusers{
+    background-color: var(--table-background);
+}
+body.dark .tableusers{
+    background-color: var(--table-background);
+}
+
+body .tabletext{
+    color: black;
+}
+body.dark .tabletext{
+    color: white;
+}
+
+:root{
+    /* ===== Colors ===== */
+
+    --table-background: #FFF;
+
+    /* ====== Transition ====== */
+    --tran-05: all 0.5s ease;
+    --tran-03: all 0.3s ease;
+    --tran-03: all 0.2s ease;
+}
+
+body.dark{
+
+    --table-background: #999999ab;
+}

@@ -1,17 +1,18 @@
 import {createBrowserRouter, Navigate} from "react-router-dom";
 import Login from "./views/Login.jsx";
-import Users from "./views/Users.jsx";
+import UsersManagement from "./views/UserManagement.jsx";
 import NotFound from "./views/NotFound.jsx";
 import GuestLayout from "./layout/GuestLayout.jsx";
 import DefaultLayout from "./layout/DefaultLayout.jsx";
 import Dashboard from "./views/Dashboard.jsx";
 import AdminPanel from "./views/AdminPanel.jsx";
 import ProtectedRoutes from "./hooks/ProtectedRoutes.jsx";
+import MainContent from "./views/MainContent.jsx";
 
 const router  = createBrowserRouter([
     {
         path: '/',
-        element: <ProtectedRoutes element={<DefaultLayout />} roles={['Student','Teacher','Admin']} />,
+        element: <ProtectedRoutes element={<DefaultLayout />} roles={['Student','Teacher','Admin','Secretary']} />,
         children:[
             {
                 path: '/',
@@ -19,15 +20,15 @@ const router  = createBrowserRouter([
             },
             {
                 path: '/dashboard',
-                element: <ProtectedRoutes element={<Dashboard />} roles={['Student','Admin','Teacher']} />
+                element: <ProtectedRoutes element={<MainContent />} roles={['Student','Admin','Teacher','Secretary']} />
             },
             {
                 path: '/users',
-                element: <ProtectedRoutes element={<Users />} roles={['Admin']} />
+                element: <ProtectedRoutes element={<MainContent />} roles={['Admin']} />
             },
             {
                 path: '/adminpanel',
-                element: <ProtectedRoutes element={<AdminPanel />} roles={['Admin']} />
+                element: <ProtectedRoutes element={<MainContent />} roles={['Admin']} />
             }
         ]
     },

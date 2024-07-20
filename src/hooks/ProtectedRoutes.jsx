@@ -8,14 +8,13 @@ import {fetchCurrentUser} from "../services/apiServices.jsx";
 const ProtectedRoutes = ({ element, roles }) => {
     const [currentUserRole, setCurrentUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
         const getUserRole = async () => {
             try {
                 const user = await fetchCurrentUser();
-                setCurrentUserRole(user.user.role);
+                setCurrentUserRole(user.role.name); // Assuming user.role exists
             } catch (error) {
-                console.error("Error fetching user role:", error);
+                console.error('Error fetching user role:', error);
             } finally {
                 setLoading(false);
             }
