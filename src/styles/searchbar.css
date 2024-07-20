@@ -1,0 +1,9 @@
+.uil-search{
+    position: absolute !important;
+    left: 15px;
+    font-size: 22px;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--black-light-color);
+}

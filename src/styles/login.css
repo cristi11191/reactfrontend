@@ -1,0 +1,154 @@
+
+.login-mode {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    height: calc(100% - 90px);
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+
+.login-mode a {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+
+
+.mode-toggle {
+    margin-left: 10px;
+    cursor: pointer;
+    position: sticky;
+    right: 14px;
+    height: 50px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loginswitch {
+    position: absolute; /* Position it relative to .login-container */
+    top: 10px; /* Adjust positioning as needed */
+    display: inline-block;
+    height: 22px;
+    width: 40px;
+    border-radius: 25px;
+    background-color: var(--toggle-color);
+}
+
+.loginswitch:before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 15px;
+    width: 15px;
+    background-color: var(--panel-color);
+    border-radius: 50%;
+    transition: var(--tran-03);
+}
+
+body.dark .loginswitch:before {
+    left: 20px;
+}
+
+body.dark .loginswitch {
+    background-color: var(--toggle-color);
+}
+
+
+
+
+body.dark .logbtn  .logintext{
+    font-weight: bold;
+
+}
+body.dark .logbtn{
+    background-color: var(--log-btn-color);
+}
+
+body.dark .logbtn:hover {
+    background-color: #2980b9;
+    color: var(--log-btn-text-color);
+}
+
+
+/* Form styles */
+.login-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    display: block;
+}
+
+.form-group input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.LoginBody {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--login-background-color);
+}
+.logbtn {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--log-btn-color) !important;
+    color: var(--log-btn-text-color);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+}
+
+.logbtn:hover {
+    background-color: #8ac4eb !important;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .login-container {
+        width: 90%;
+        padding: 15px;
+    }
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    position: relative;
+}
+
+
+
+
