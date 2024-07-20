@@ -113,15 +113,16 @@ export const login = async (email, password) => {
 
 // Fetch current user data
 export const fetchCurrentUser = async () => {
-    // eslint-disable-next-line no-useless-catch
     try {
         const response = await axiosInstance.get('current-user');
         localStorage.setItem('role', response.data.user.role);
+        localStorage.setItem('permissions', JSON.stringify(response.data.user.permissions));
         return response.data;
     } catch (error) {
         throw error;
     }
 };
+
 
 export const fetchUsers = async () => {
     // eslint-disable-next-line no-useless-catch
