@@ -26,6 +26,7 @@ body.dark .tabletext {
     --edit-btn-color: #0022ff;
     --delete-btn-color: #f44336;
     --table-background: #FFF;
+    --text-color-dialog: #000;
 
     /* ====== Transition ====== */
     --tran-05: all 0.5s ease;
@@ -49,6 +50,7 @@ body.dark {
     --edit-btn-color: #ffa726;
     --delete-btn-color: #f44336;
     --table-background: rgba(82, 82, 82, 0.67);
+    --text-color-dialog: #ffffff;
 }
 
 /* Add border to table and cells */
@@ -85,6 +87,37 @@ body.dark .tableusers tbody tr:hover {
     padding: 4px;
 }
 
-.dialog-design{
-    background-color: var(--color-background);
+.custom-dialog-paper {
+    background-color: var(--color-background) !important; /* Background color */
+    color: var(--text-color-dialog) !important; /* Text color */
+}
+
+.custom-dialog-title {
+    font-size: 1.5rem; /* Title font size */
+    font-weight: bold; /* Title font weight */
+    color: var(--text-color-dialog) !important; /* Text color */
+}
+
+.custom-textfield .MuiInputBase-input{
+    color: var(--text-color-dialog) !important;
+}
+
+.custom-textfield .MuiFormLabel-root{
+    color: var(--text-color-dialog) !important;
+}
+
+.custom-dialog-actions {
+    background-color: var(--color-background) !important; /* Background color */
+    color: var(--text-color-dialog)
+}
+.custom-dialog-actions .custom-button {
+    font-weight: bold; /* Make text bold */
+    padding: 8px 16px; /* Adjust padding if needed */
+}
+.custom-dialog-actions .custom-cancel-button {
+    color: #1976d2; /* Brighter color for primary button */
+}
+
+.custom-dialog-actions .custom-confirm-button {
+    color: #d32f2f; /* Brighter color for secondary button */
 }

@@ -3,7 +3,7 @@ import api from './apiServices';
 // Create a new user
 export const createUser = async (userData) => {
     try {
-        const response = await api.post('users', userData);
+        const response = await api.post('register', userData);
         return response.data;
     } catch (error) {
         console.error('Error creating user:', error);
@@ -25,7 +25,9 @@ export const fetchUserById = async (userId) => {
 // Update a user by ID
 export const updateUserById = async (userId, userData) => {
     try {
-        const response = await api.put(`users/${userId}`, userData);
+        // Only include password in the request if it is provided
+        const { password, ...updateData } = userData;
+        const response = await api.put(`users/${userId}`, updateData);
         return response.data;
     } catch (error) {
         console.error('Error updating user:', error);
