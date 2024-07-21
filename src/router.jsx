@@ -4,7 +4,7 @@ import UsersManagement from "./views/UserManagement.jsx";
 import NotFound from "./views/NotFound.jsx";
 import GuestLayout from "./layout/GuestLayout.jsx";
 import DefaultLayout from "./layout/DefaultLayout.jsx";
-import Dashboard from "./views/Dashboard.jsx";
+import PoliciesManagement from "./views/RolePermissionManagement.jsx";
 import AdminPanel from "./views/AdminPanel.jsx";
 import ProtectedRoutes from "./hooks/ProtectedRoutes.jsx";
 import MainContent from "./views/MainContent.jsx";
@@ -24,6 +24,10 @@ const router  = createBrowserRouter([
             },
             {
                 path: '/users',
+                element: <ProtectedRoutes element={<MainContent />} roles={['Admin']} />
+            },
+            {
+                path: '/roleandpermission',
                 element: <ProtectedRoutes element={<MainContent />} roles={['Admin']} />
             },
             {

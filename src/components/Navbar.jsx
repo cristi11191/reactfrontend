@@ -33,7 +33,7 @@ const Navbar = () => {
                 <div className="logo-image">
                     <Avatar alt="Remy Sharp" src={logo} />
                 </div>
-                <span className="logo_name" id="username">WebStudent</span>
+                <span className="logo_name" id="username">{localStorage.getItem('role')==='Admin' ? 'Administrator' : 'WebStudent'}</span>
             </div>
             <div className="menu-items">
                 <ul className="nav-links">
