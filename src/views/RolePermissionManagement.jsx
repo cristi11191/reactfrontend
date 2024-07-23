@@ -426,7 +426,7 @@ export default function RolePermissionManagement() {
                         </Button>
                     )}
 
-                    {/* Roles Table */}
+                    {hasPermission([RoleManagementPermissions.role.read]) && (
                     <TableContainer component={Paper} style={{ marginTop: 40 }} className='tableusers'>
                         <Table sx={{ minWidth: 650 }} size="small" aria-label="roles table">
                             <TableHead>
@@ -499,14 +499,15 @@ export default function RolePermissionManagement() {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    )}
 
                     {hasPermission([RoleManagementPermissions.permission.create]) && (
                         <Button className='btn-add permission' variant="contained" color="primary" onClick={handleOpenPermissionDialog}>
                             Add Permission
                         </Button>
                     )}
+                    {hasPermission([RoleManagementPermissions.permission.read]) && (
 
-                    {/* Permissions Table */}
                     <TableContainer component={Paper} style={{ marginTop: 40 }} className='tableusers'>
                         <Table sx={{ minWidth: 650 }} size="small" aria-label="permissions table">
                             <TableHead>
@@ -559,6 +560,7 @@ export default function RolePermissionManagement() {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                )}
 
                     <Dialog open={open} onClose={handleClose} PaperProps={{ className: 'custom-dialog-paper' }}>
                         <DialogTitle className='custom-dialog-title'>{isEdit ? 'Update Role' : 'Add New Role'}</DialogTitle>
