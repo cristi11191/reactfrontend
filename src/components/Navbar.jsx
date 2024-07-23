@@ -77,10 +77,8 @@ const Navbar = () => {
                         };
 
 
-                        console.log("Permissions" ,config.permissions);
 
                         const canRead = checkPermission(config.permissions, 'read');
-                        console.log("check for read = ", canRead );
                         if (canRead) {
                             const IconComponent = config.icon;
                             return (

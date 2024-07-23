@@ -583,6 +583,7 @@ export default function RolePermissionManagement() {
                                 error={!!roleNameError}
                                 helperText={roleNameError}
                             />
+
                             <div style={{ marginTop: 20, marginBottom: 10 }}>Assign Permissions:</div>
                             <div className="grid-container">
                                 <div>{customList('Available Permissions', left)}</div>
@@ -614,6 +615,7 @@ export default function RolePermissionManagement() {
                                 </div>
                                 <div>{customList('Assigned Permissions', right)}</div>
                             </div>
+
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">

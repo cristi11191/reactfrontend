@@ -23,6 +23,7 @@ import '../styles/styles.css';
 import { fetchAllUsers, createUser, updateUserById,deleteUserById } from "../services/userServices.jsx";
 import RoleServices  from "../services/roleServices.jsx";
 import MenuItem from '@mui/material/MenuItem';
+import SearchBox from "../components/SearchBar.jsx";
 export default function UserManagement() {
 
     const [users, setUsers] = useState([]);
@@ -135,6 +136,7 @@ export default function UserManagement() {
 
     const showActionsColumn = hasPermission([permissions.update]) || hasPermission([permissions.delete]);
     return (
+
         <div style={{ padding: 20 }}>
             {hasPermission([permissions.create]) && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
@@ -147,6 +149,7 @@ export default function UserManagement() {
                     <CircularProgress />
                 </div>
             ) : (
+
                 <TableContainer component={Paper} style={{ marginTop: 20 }} className='tableusers'>
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
