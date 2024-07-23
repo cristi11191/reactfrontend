@@ -39,19 +39,49 @@ const Navbar = () => {
                 <ul className="nav-links">
                     {Object.entries(permissionsConfig).map(([key, config]) => {
                         // Check if the user has any required permissions for this section
-                        const hasAccess = (permissions) => {
-                            if (!permissions) return false;
+                        const checkPermission = (permissions, actionKey) => {
+                            if (!permissions || !actionKey) return false;
 
-                            return Object.values(permissions).some(permissionSet => {
-                                if (typeof permissionSet === 'string') {
-                                    return hasPermission([permissionSet]);
+                            // Helper function to get the permission value for a specific action key
+                            const getPermissionValue = (permissions, actionKey) => {
+                                if (typeof permissions === 'string') {
+                                    return permissions; // Directly return if permissions is a string
                                 }
-                                return Object.values(permissionSet).some(permission => hasPermission(permission));
-                            });
+
+                                if (typeof permissions === 'object') {
+                                    // Search for the actionKey in flat or nested structure
+                                    for (const key in permissions) {
+                                        if (Object.prototype.hasOwnProperty.call(permissions, key)) {
+                                            const value = permissions[key];
+                                            if (typeof value === 'object') {
+                                                // Check nested objects
+                                                const nestedValue = getPermissionValue(value, actionKey);
+                                                if (nestedValue) return nestedValue;
+                                            } else if (key === actionKey) {
+                                                // Return the permission if the key matches
+                                                return value;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                return null; // Return null if the permission is not found
+                            };
+
+                            // Extract the permission value for the actionKey
+                            const permissionValue = getPermissionValue(permissions, actionKey);
+                            if (!permissionValue) return false;
+
+                            // Check if the user has the extracted permission
+                            return hasPermission([permissionValue]);
                         };
 
 
-                        if (hasAccess) {
+                        console.log("Permissions" ,config.permissions);
+
+                        const canRead = checkPermission(config.permissions, 'read');
+                        console.log("check for read = ", canRead );
+                        if (canRead) {
                             const IconComponent = config.icon;
                             return (
                                 <li key={key}>

@@ -40,8 +40,6 @@ const ProtectedRoutes = ({ element, permission = [] }) => {
     if (loading) {
         return <div>Loading...</div>; // Or a loading spinner
     }
-    // eslint-disable-next-line no-debugger
-    debugger;
 
     if (permission.length === 0) {
         return element;

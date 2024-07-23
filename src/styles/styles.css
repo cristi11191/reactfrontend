@@ -30,7 +30,6 @@
     --log-btn-text-color: #707070;
     --color-background: #ffffff;
 
-
     /* ====== Transition ====== */
     --tran-05: all 0.5s ease;
     --tran-03: all 0.3s ease;
@@ -137,7 +136,7 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover{
 }
 @media (max-width: 400px) {
     nav{
-        width: 0px;
+        width: 0;
     }
     nav.close{
         width: 73px;

@@ -9,6 +9,9 @@ nav{
     border-right: 1px solid var(--border-color);
     transition: var(--tran-05);
 }
+ol, ul {
+    padding-left: 0 !important;
+}
 nav.close{
     width: 73px;
 }

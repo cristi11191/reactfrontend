@@ -72,8 +72,6 @@ const handleUnauthorizedError = async (originalRequest, errorResponse) => {
 // 403 Forbidden error handler
 const handleForbiddenError = (error) => {
     console.error('Unauthorized access:', error);
-    localStorage.removeItem('token');
-    window.location.replace('/login');
     return Promise.reject({ message: 'Forbidden: Access is denied.', ...error });
 };
 

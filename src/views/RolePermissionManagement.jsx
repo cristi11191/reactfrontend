@@ -32,6 +32,7 @@ import PermissionServices from "../services/permissionServices.jsx";
 import { hasPermission } from '../utils/permissions';
 import { permissionsConfig } from '../config/permissionsConfig';
 import '../styles/styles.css';
+import {permissionDependencies} from "../hooks/permissionsDependencies.jsx";
 
 function not(a, b) {
     const bIds = new Set(b.map(item => item.id)); // Assuming each item has a unique `id` property
@@ -351,23 +352,45 @@ export default function RolePermissionManagement() {
             setRoleNameError('Role with this name already exists');
             return;
         }
+        const permissionNameToIdMap = permissions.reduce((map, permission) => {
+            map[permission.name] = permission.id;
+            return map;
+        }, {});
+
+        // Function to get permissions with their dependencies
+        const getPermissionsWithDependencies = (selectedPermissions) => {
+            const allPermissions = new Set(selectedPermissions);
+
+            selectedPermissions.forEach(permission => {
+                if (permissionDependencies[permission]) {
+                    permissionDependencies[permission].forEach(dep => {
+                        allPermissions.add(dep);
+                    });
+                }
+            });
+
+            return Array.from(allPermissions);
+        };
+
 
         try {
             if (isEdit) {
-                console.log(currentRole.id, newRoleName.trim());
+                console.log("Updating role:", currentRole.id, newRoleName.trim());
                 await RoleServices.updateRole(currentRole.id, { name: newRoleName.trim() });
 
-
                 if (right.length > 0) {
-                    const permissions = right.map(permission => permission.id);
-                    await RoleServices.updateRolePermissions(currentRole.id, permissions);
-                    console.log(currentRole.id, permissions);
+                    const selectedPermissions = right.map(permission => permission.name);
+                    const permissionsWithDeps = getPermissionsWithDependencies(selectedPermissions);
+                    const permissionsWithDepsIds = permissionsWithDeps.map(name => permissionNameToIdMap[name]);
+                    await RoleServices.updateRolePermissions(currentRole.id, permissionsWithDepsIds);
                 }
             } else {
                 const newRole = await RoleServices.createRole({ name: newRoleName.trim() });
                 if (right.length > 0) {
-                    const permissions = right.map(permission => permission.id);
-                    await RoleServices.addPermissionsToRole({ role_id: newRole.id, permissions });
+                    const selectedPermissions = right.map(permission => permission.name);
+                    const permissionsWithDeps = getPermissionsWithDependencies(selectedPermissions);
+                    const permissionsWithDepsIds = permissionsWithDeps.map(name => permissionNameToIdMap[name]);
+                    await RoleServices.addPermissionsToRole({ role_id: newRole.id, permissions: permissionsWithDepsIds });
                 }
             }
 
@@ -381,10 +404,8 @@ export default function RolePermissionManagement() {
         } catch (error) {
             console.error('Error adding or updating role:', error);
         }
-
-
-
     };
+
 
 
 

@@ -44,10 +44,10 @@ export const permissionsConfig = {
         path: '/roleandpermission',
         permissions: {
             role: {
-                read: 'read_role',
-                create: 'create_role',
-                update: 'update_role',
-                delete: 'delete_role',
+                    read: 'read_role',
+                    create: 'create_role',
+                    update: 'update_role',
+                    delete: 'delete_role',
             },
             permission: {
                 read: 'read_permission',

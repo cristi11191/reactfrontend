@@ -114,6 +114,7 @@ body.dark .logbtn:hover {
     align-items: center;
     height: 100vh;
     background-color: var(--login-background-color);
+    transition: var(--tran-05);
 }
 .logbtn {
     padding: 10px;

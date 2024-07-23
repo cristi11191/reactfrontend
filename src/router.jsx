@@ -5,10 +5,6 @@ import GuestLayout from "./layout/GuestLayout.jsx";
 import DefaultLayout from "./layout/DefaultLayout.jsx";
 import ProtectedRoutes from "./hooks/ProtectedRoutes.jsx";
 import MainContent from "./views/MainContent.jsx";
-import Dashboard from "./views/Dashboard.jsx";
-import UserManagement from "./views/UserManagement.jsx";
-import RolePermissionManagement from "./views/RolePermissionManagement.jsx";
-import AdminPanel from "./views/AdminPanel.jsx";
 
 const router  = createBrowserRouter([
     {

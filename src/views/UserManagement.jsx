@@ -256,6 +256,7 @@ export default function UserManagement() {
                         value={newUser.role_id}
                         className={`custom-textfield role-dw`}
                         onChange={(e) => setNewUser({ ...newUser, role_id: e.target.value })}
+
                     >
                         {roles.map((role) => (
                             <MenuItem key={role.id} value={role.id}>
