@@ -37,22 +37,27 @@ export const permissionsConfig = {
             delete: 'delete_user',
         }
     },
-    roleandpermission_management: {
+    role_and_permission_management: {
         component: RolePermissionManagement,
         label: 'Role/Permission',
         icon: UilUser,
         path: '/roleandpermission',
         permissions: {
-            role_read: 'read_role',
-            role_create: 'create_role',
-            role_update: 'update_role',
-            role_delete: 'delete_role',
-            permission_read: 'read_permission',
-            permission_create: 'create_permission',
-            permission_update: 'update_permission',
-            permission_delete: 'delete_permission',
+            role: {
+                read: 'read_role',
+                create: 'create_role',
+                update: 'update_role',
+                delete: 'delete_role',
+            },
+            permission: {
+                read: 'read_permission',
+                create: 'create_permission',
+                update: 'update_permission',
+                delete: 'delete_permission',
+            }
         }
     },
+
     // Add more configurations as needed
 };
 

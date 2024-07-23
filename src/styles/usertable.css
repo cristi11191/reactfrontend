@@ -6,6 +6,10 @@
 
 }
 
+.permission-column{
+    max-width: 250px !important;
+}
+
 body .tableusers {
     background-color: var(--table-background);
 }
@@ -110,6 +114,9 @@ body.dark .tableusers tbody tr:hover {
     background-color: var(--color-background) !important; /* Background color */
     color: var(--text-color-dialog)
 }
+
+
+
 .custom-dialog-actions .custom-button {
     font-weight: bold; /* Make text bold */
     padding: 8px 16px; /* Adjust padding if needed */
@@ -120,4 +127,53 @@ body.dark .tableusers tbody tr:hover {
 
 .custom-dialog-actions .custom-confirm-button {
     color: #d32f2f; /* Brighter color for secondary button */
+}
+
+
+#role_id .MuiMenu-paper {
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-dialog) !important;
+}
+
+#role_id .MuiMenu-list {
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-dialog) !important;
+}
+
+#role_id .MuiMenuItem-root {
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-dialog) !important;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list {
+    background-color: var(--color-background) !important;
+}
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root.Mui-selected {
+    color: var(--text-color-dialog) !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
+    color: var(--text-color-dialog) !important;
+}
+
+.css-e6s3aq-MuiCardHeader-root{
+    background-color: var(--color-background) !important;
+    border-color:  var(--text-color-dialog) !important;
+}
+.css-abna4k-MuiList-root {
+    background-color: var(--color-background) !important;
+}
+
+.css-9mgopn-MuiDivider-root {
+    background-color: var(--color-background) !important;
+}
+.css-et1ao3-MuiTypography-root {
+    color: var(--text-color-dialog) !important;
+}
+.css-83ijpv-MuiTypography-root {
+    color: var(--text-color-dialog) !important;
+}
+
+.css-t0zib5-MuiGrid-root {
+    background-color: var(--color-background) !important;
 }

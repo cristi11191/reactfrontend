@@ -3,7 +3,7 @@
 import React from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import logo from '../assets/logo.png';
-import { UilMoon, UilSignout, UilEstate, UilFilesLandscapes, UilChart, UilThumbsUp, UilComments, UilShare } from '@iconscout/react-unicons';
+import { UilMoon, UilSignout} from '@iconscout/react-unicons';
 import useDarkMode from '../hooks/useDarkMode';
 import Avatar from '@mui/material/Avatar';
 import '../styles/styles.css'
@@ -39,7 +39,17 @@ const Navbar = () => {
                 <ul className="nav-links">
                     {Object.entries(permissionsConfig).map(([key, config]) => {
                         // Check if the user has any required permissions for this section
-                        const hasAccess = Object.values(config.permissions).some(permission => hasPermission(permission));
+                        const hasAccess = (permissions) => {
+                            if (!permissions) return false;
+
+                            return Object.values(permissions).some(permissionSet => {
+                                if (typeof permissionSet === 'string') {
+                                    return hasPermission([permissionSet]);
+                                }
+                                return Object.values(permissionSet).some(permission => hasPermission(permission));
+                            });
+                        };
+
 
                         if (hasAccess) {
                             const IconComponent = config.icon;

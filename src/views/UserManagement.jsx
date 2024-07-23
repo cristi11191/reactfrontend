@@ -22,7 +22,9 @@ import { permissionsConfig } from '../config/permissionsConfig';
 import '../styles/styles.css';
 import { fetchAllUsers, createUser, updateUserById,deleteUserById } from "../services/userServices.jsx";
 import RoleServices  from "../services/roleServices.jsx";
+import MenuItem from '@mui/material/MenuItem';
 export default function UserManagement() {
+
     const [users, setUsers] = useState([]);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true); // New loading state
@@ -131,10 +133,10 @@ export default function UserManagement() {
         setOpenDeleteDialog(false);
     };
 
-    const showActionsColumn = hasPermission(permissions.update) || hasPermission(permissions.delete);
+    const showActionsColumn = hasPermission([permissions.update]) || hasPermission([permissions.delete]);
     return (
         <div style={{ padding: 20 }}>
-            {hasPermission(permissions.create) && (
+            {hasPermission([permissions.create]) && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
                     Add User
                 </Button>
@@ -171,7 +173,7 @@ export default function UserManagement() {
                                     <TableCell align="right" className='tabletext tblrow'>{user.role.name}</TableCell>
                                     {showActionsColumn && (
                                         <TableCell align="right">
-                                            {hasPermission(permissions.update) && (
+                                            {hasPermission([permissions.update]) && (
                                                 <IconButton
                                                     aria-label="edit"
                                                     color="primary"
@@ -183,7 +185,7 @@ export default function UserManagement() {
                                                     <EditIcon />
                                                 </IconButton>
                                             )}
-                                            {hasPermission(permissions.delete) && (
+                                            {hasPermission([permissions.delete]) && (
                                                 <IconButton
                                                     aria-label="delete"
                                                     color="secondary"
@@ -252,16 +254,13 @@ export default function UserManagement() {
                         fullWidth
                         variant="outlined"
                         value={newUser.role_id}
-                        className="custom-textfield"
+                        className={`custom-textfield role-dw`}
                         onChange={(e) => setNewUser({ ...newUser, role_id: e.target.value })}
-                        SelectProps={{
-                            native: true,
-                        }}
                     >
                         {roles.map((role) => (
-                            <option key={role.id} value={role.id}>
+                            <MenuItem key={role.id} value={role.id}>
                                 {role.name}
-                            </option>
+                            </MenuItem>
                         ))}
                     </TextField>
                 </DialogContent>
@@ -269,7 +268,7 @@ export default function UserManagement() {
                     <Button onClick={handleClose} color="primary" className="custom-button custom-cancel-button">
                         Cancel
                     </Button>
-                    <Button onClick={handleAddOrUpdateUser} color="primary" className="custom-button custom-confirm-button">
+                    <Button onClick={handleAddOrUpdateUser } color="primary" className="custom-button custom-confirm-button">
                         {isEditMode ? 'Update' : 'Add'}
                     </Button>
                 </DialogActions>

@@ -1,49 +1,231 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import CircularProgress from '@mui/material/CircularProgress';
+import React, { useState, useEffect } from 'react';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    CircularProgress,
+    Checkbox,
+    Grid,
+    List,
+    Card,
+    CardHeader,
+    ListItemButton,
+    ListItemText,
+    ListItemIcon,
+    TextField,
+    Divider
+} from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
+import RoleServices from "../services/roleServices.jsx";
+import PermissionServices from "../services/permissionServices.jsx";
 import { hasPermission } from '../utils/permissions';
 import { permissionsConfig } from '../config/permissionsConfig';
-import { fetchUsers } from "../services/apiServices.jsx";
-import RoleServices  from "../services/roleServices.jsx";
-import PermissionServices from "../services/permissionServices.jsx";
 import '../styles/styles.css';
 
-export default function UserManagement() {
-    const [users, setUsers] = useState([]);
+function not(a, b) {
+    const bIds = new Set(b.map(item => item.id)); // Assuming each item has a unique `id` property
+    return a.filter(item => !bIds.has(item.id));
+}
+
+function intersection(a, b) {
+    return a.filter((value) => b.indexOf(value) !== -1);
+}
+
+function union(a, b) {
+    return [...a, ...not(b, a)];
+}
+
+export default function RolePermissionManagement() {
+
     const [roles, setRoles] = useState([]);
-    const [loading, setLoading] = useState(true); // New loading state
     const [permissions, setPermissions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const [newUser, setNewUser] = useState({ name: '', email: '', role: '' });
-    const [expandedRoleId, setExpandedRoleId] = useState(null); // Manage expanded role ID
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [deleteItem, setDeleteItem] = useState(null);
+    const [deleteType, setDeleteType] = useState(''); // 'role' or 'permission'
+    const [expandedRoleId, setExpandedRoleId] = useState(null);
+    const [newRoleName, setNewRoleName] = useState('');
+    const [roleNameError, setRoleNameError] = useState('');
+    const [checked, setChecked] = useState([]);
+    const [left, setLeft] = useState([]);
+    const [right, setRight] = useState([]);
+    const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
+    const [newPermissionName, setNewPermissionName] = useState('');
+    const [permissionNameError, setPermissionNameError] = useState('');
+    const [isEdit, setIsEdit] = useState(false);
+    const [currentRole, setCurrentRole] = useState(null);
+    const [currentPermission, setCurrentPermission] = useState(null);
+
+
+    const leftChecked = intersection(checked, left);
+    const rightChecked = intersection(checked, right);
+
+    const handleToggle = (value) => () => {
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        setChecked(newChecked);
+    };
+
+
+    const numberOfChecked = (items) => intersection(checked, items).length;
+
+    const handleToggleAll = (items) => () => {
+        if (numberOfChecked(items) === items.length) {
+            setChecked(not(checked, items));
+        } else {
+            setChecked(union(checked, items));
+        }
+    };
+
+    const handleCheckedRight = () => {
+        // Move only checked permissions from left to right
+        const permissionsToMove = leftChecked;
+        setRight(right.concat(permissionsToMove));
+        setLeft(not(left, permissionsToMove));
+        setChecked([]); // Uncheck all after moving
+    };
+
+    const handleCheckedLeft = () => {
+        // Move only checked permissions from right to left
+        const permissionsToMove = rightChecked;
+        setLeft(left.concat(permissionsToMove));
+        setRight(not(right, permissionsToMove));
+        setChecked([]); // Uncheck all after moving
+    };
+
+    const handleOpenPermissionDialog = (permission = null) => {
+        console.log(isEdit);
+        console.log(permission);
+        if (permission) {
+            // Editing existing permission
+            setIsEdit(true);
+            setCurrentPermission(permission);
+            setNewPermissionName(permission.name);
+        } else {
+            // Adding new permission
+            setIsEdit(false);
+            setCurrentPermission(null);
+            setNewPermissionName('');
+        }
+        setOpenPermissionDialog(true);
+    };
+
+
+    const handleAddOrUpdatePermission = async () => {
+        if (!newPermissionName.trim()) {
+            setPermissionNameError('Permission name is required');
+            return;
+        }
+
+        const permissionExists = permissions.some(permission => permission.name.toLowerCase() === newPermissionName.trim().toLowerCase());
+        if (!isEdit && permissionExists) {
+            setPermissionNameError('Permission with this name already exists');
+            return;
+        }
+
+        try {
+            if (isEdit) {
+                await PermissionServices.updatePermission(currentPermission.id,{ name: newPermissionName.trim() });
+            } else {
+                await PermissionServices.createPermission({ name: newPermissionName.trim() });
+            }
+
+            const data = await PermissionServices.fetchPermissions();
+            setPermissions(data);
+            handleClosePermissionDialog();
+        } catch (error) {
+            console.error('Error adding or updating permission:', error);
+        }
+    };
+
+
+
+    const customList = (title, items) => (
+        <Card className="custom-list">
+            <CardHeader
+                sx={{ px: 2, py: 1 }}
+                avatar={
+                    <Checkbox
+                        onClick={handleToggleAll(items)}
+                        checked={numberOfChecked(items) === items.length && items.length !== 0}
+                        indeterminate={
+                            numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0
+                        }
+                        disabled={items.length === 0}
+                        inputProps={{
+                            'aria-label': 'all items selected',
+                        }}
+                    />
+                }
+                title={title}
+                subheader={`${numberOfChecked(items)}/${items.length} selected`}
+                style={{ color: 'var(--text-color-dialog)' }} /* Set text color */
+            />
+            <Divider />
+            <List
+                sx={{
+                    width: '100%',
+                    height: 'calc(100% - 56px)', // Adjust height to fit the Card
+                    bgcolor: 'background.paper',
+                    overflow: 'auto',
+                    color: 'var(--text-color-dialog)' /* Set text color */
+                }}
+                dense
+                component="div"
+                role="list"
+            >
+                {items.map((value) => {
+                    const labelId = `transfer-list-all-item-${value.id}-label`;
+
+                    return (
+                        <ListItemButton
+                            key={value.id}
+                            role="listitem"
+                            onClick={handleToggle(value)}
+                            style={{ color: 'var(--text-color-dialog)' }} /* Set text color */
+                        >
+                            <ListItemIcon>
+                                <Checkbox
+                                    checked={checked.indexOf(value) !== -1}
+                                    tabIndex={-1}
+                                    disableRipple
+                                    inputProps={{
+                                        'aria-labelledby': labelId,
+                                    }}
+                                    style={{ color: 'var(--text-color-dialog)' }} /* Set text color */
+                                />
+                            </ListItemIcon>
+                            <ListItemText id={labelId} primary={value.name} style={{ color: 'var(--text-color-dialog)' }} /* Set text color */ />
+                        </ListItemButton>
+                    );
+                })}
+            </List>
+        </Card>
+    );
+
+
+
 
     useEffect(() => {
-        const getUsers = async () => {
-            try {
-                const data = await fetchUsers();
-                setUsers(data);
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            }
-        };
 
         const getRoles = async () => {
             try {
@@ -62,39 +244,152 @@ export default function UserManagement() {
             try {
                 const data = await PermissionServices.fetchPermissions();
                 setPermissions(data);
+                setLeft(data); // Set all permissions to the left side
+                setRight([]); // Right side should be empty initially
             } catch (error) {
                 console.error('Error fetching permissions:', error);
             }
         };
 
         const fetchData = async () => {
-            await Promise.all([getUsers(), getRoles(), getPermissions()]);
+            await Promise.all([getRoles(), getPermissions()]);
             setLoading(false);
         };
 
         fetchData();
     }, []);
 
-    const { permissions: RoleManagementPermissions } = permissionsConfig.roleandpermission_management;
+    const { permissions: RoleManagementPermissions } = permissionsConfig.role_and_permission_management;
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (role = null) => {
+        if (role) {
+            setIsEdit(true);
+            setCurrentRole(role);
+            setNewRoleName(role.name);
+            setRight(role.permissions);
+            setLeft(not(permissions, role.permissions));
+        } else {
+            setIsEdit(false);
+            setCurrentRole(null);
+            setNewRoleName('');
+            setRight([]);
+            setLeft(permissions);
+        }
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setNewRoleName('');
+        setRoleNameError('');
+        setChecked([]);
+        setLeft(permissions);
+        setRight([]);
+        setIsEdit(false);
+        setCurrentRole(null);
     };
 
-    const handleAddUser = () => {
-        // Add user logic here
-        setOpen(false);
+    const handleDelete = (item, type) => {
+        setDeleteItem(item);
+        setDeleteType(type);
+        setOpenDeleteDialog(true);
     };
+
+    const handleCancelDelete = () => {
+        setOpenDeleteDialog(false);
+        setDeleteItem(null);
+        setDeleteType('');
+    };
+
+    const handleClosePermissionDialog = () => {
+        setOpenPermissionDialog(false);
+        setNewPermissionName('');
+        setPermissionNameError('');
+        setIsEdit(false); // Reset isEdit to false
+        setCurrentPermission(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            if (deleteType === 'role') {
+                await RoleServices.deleteRole(deleteItem.id);
+            } else if (deleteType === 'permission') {
+                await PermissionServices.deletePermission(deleteItem.id);
+            }
+            const data = await RoleServices.fetchRoles();
+            const rolesWithPermissions = await Promise.all(data.map(async (role) => {
+                const permissions = await RoleServices.getRolePermissions(role.id);
+                return { ...role, permissions };
+            }));
+            setRoles(rolesWithPermissions);
+
+            const permissionsData = await PermissionServices.fetchPermissions();
+            setPermissions(permissionsData);
+            setLeft(permissionsData);
+            setRight([]);
+        } catch (error) {
+            console.error('Error deleting item:', error);
+        }
+        handleCancelDelete();
+    };
+
     const handleTogglePermissions = (roleId) => {
         setExpandedRoleId(expandedRoleId === roleId ? null : roleId);
     };
 
-    const showPermissionActionsColumn = hasPermission(RoleManagementPermissions.permission_update) || hasPermission(RoleManagementPermissions.permission_delete);
-    const showRoleActionsColumn = hasPermission(RoleManagementPermissions.role_update) || hasPermission(RoleManagementPermissions.role_delete);
+    const showPermissionActionsColumn = hasPermission([RoleManagementPermissions.permission.update]) || hasPermission([RoleManagementPermissions.permission.delete]);
+    const showRoleActionsColumn = hasPermission([RoleManagementPermissions.role.update]) || hasPermission([RoleManagementPermissions.role.delete]);
+
+    const handleAddOrUpdateRole = async () => {
+        if (!newRoleName.trim()) {
+            setRoleNameError('Role name is required');
+            return;
+        }
+
+        const roleExists = roles.some(role => role.name.toLowerCase() === newRoleName.trim().toLowerCase());
+        if (!isEdit && roleExists) {
+            setRoleNameError('Role with this name already exists');
+            return;
+        }
+
+        try {
+            if (isEdit) {
+                console.log(currentRole.id, newRoleName.trim());
+                await RoleServices.updateRole(currentRole.id, { name: newRoleName.trim() });
+
+
+                if (right.length > 0) {
+                    const permissions = right.map(permission => permission.id);
+                    await RoleServices.updateRolePermissions(currentRole.id, permissions);
+                    console.log(currentRole.id, permissions);
+                }
+            } else {
+                const newRole = await RoleServices.createRole({ name: newRoleName.trim() });
+                if (right.length > 0) {
+                    const permissions = right.map(permission => permission.id);
+                    await RoleServices.addPermissionsToRole({ role_id: newRole.id, permissions });
+                }
+            }
+
+            const data = await RoleServices.fetchRoles();
+            const rolesWithPermissions = await Promise.all(data.map(async (role) => {
+                const permissions = await RoleServices.getRolePermissions(role.id);
+                return { ...role, permissions };
+            }));
+            setRoles(rolesWithPermissions);
+            handleClose();
+        } catch (error) {
+            console.error('Error adding or updating role:', error);
+        }
+
+
+
+    };
+
+
+
+
+
 
     return (
         <div style={{ padding: 20 }}>
@@ -104,7 +399,7 @@ export default function UserManagement() {
                 </div>
             ) : (
                 <>
-                    {hasPermission(RoleManagementPermissions.role_create) && (
+                    {hasPermission([RoleManagementPermissions.role.create]) && (
                         <Button className='btn-add' variant="contained" color="primary" onClick={handleClickOpen}>
                             Add Role
                         </Button>
@@ -117,7 +412,7 @@ export default function UserManagement() {
                                 <TableRow className='tblrows'>
                                     <TableCell className='tabletext tblrow'>Role ID</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>Role Name</TableCell>
-                                    <TableCell align="right" className='tabletext tblrow'>Permissions</TableCell>
+                                    <TableCell align="right" className='tabletext tblrow permission-column'>Permissions</TableCell>
                                     {showRoleActionsColumn && (
                                         <TableCell align="right" className='tabletext tblrow'>Actions</TableCell>
                                     )}
@@ -131,7 +426,7 @@ export default function UserManagement() {
                                     >
                                         <TableCell component="th" scope="row" className='tabletext tblrow'>{role.id}</TableCell>
                                         <TableCell align="right" className='tabletext tblrow'>{role.name}</TableCell>
-                                        <TableCell align="right" className='tabletext tblrow'>
+                                        <TableCell align="right" className='tabletext tblrow permission-column'>
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                                                 <div style={{ marginRight: 8 }}>
                                                     {expandedRoleId === role.id
@@ -152,24 +447,26 @@ export default function UserManagement() {
                                         </TableCell>
                                         {showRoleActionsColumn && (
                                             <TableCell align="right">
-                                                {hasPermission(RoleManagementPermissions.role_update) && (
+                                                {hasPermission([RoleManagementPermissions.role.update]) && (
                                                     <IconButton
                                                         aria-label="edit"
                                                         color="primary"
                                                         sx={{ color: '#ff9800', '&:hover': { color: '#ffa726' } }}
                                                         className='tblrow action-btn edit'
                                                         id='editbtn'
+                                                        onClick={() => handleClickOpen(role)}
                                                     >
                                                         <EditIcon />
                                                     </IconButton>
                                                 )}
-                                                {hasPermission(RoleManagementPermissions.role_delete) && (
+                                                {hasPermission([RoleManagementPermissions.role.delete]) && (
                                                     <IconButton
                                                         aria-label="delete"
                                                         color="secondary"
                                                         sx={{ color: '#f44336', '&:hover': { color: '#e57373' } }}
                                                         className='tblrow action-btn delete '
                                                         id='deletebtn'
+                                                        onClick={() => handleDelete(role, 'role')}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>
@@ -182,8 +479,8 @@ export default function UserManagement() {
                         </Table>
                     </TableContainer>
 
-                    {hasPermission(RoleManagementPermissions.permission_create) && (
-                        <Button className='btn-add permission' variant="contained" color="primary" onClick={handleClickOpen}>
+                    {hasPermission([RoleManagementPermissions.permission.create]) && (
+                        <Button className='btn-add permission' variant="contained" color="primary" onClick={handleOpenPermissionDialog}>
                             Add Permission
                         </Button>
                     )}
@@ -210,24 +507,26 @@ export default function UserManagement() {
                                         <TableCell align="right" className='tabletext tblrow'>{permission.name}</TableCell>
                                         {showPermissionActionsColumn && (
                                             <TableCell align="right">
-                                                {hasPermission(RoleManagementPermissions.permission_update) && (
+                                                {hasPermission([RoleManagementPermissions.permission.update]) && (
                                                     <IconButton
                                                         aria-label="edit"
                                                         color="primary"
                                                         sx={{ color: '#ff9800', '&:hover': { color: '#ffa726' } }}
                                                         className='tblrow action-btn edit'
                                                         id='editbtn'
+                                                        onClick={() => handleOpenPermissionDialog(permission)}
                                                     >
                                                         <EditIcon />
                                                     </IconButton>
                                                 )}
-                                                {hasPermission(RoleManagementPermissions.permission_delete) && (
+                                                {hasPermission([RoleManagementPermissions.permission.delete]) && (
                                                     <IconButton
                                                         aria-label="delete"
                                                         color="secondary"
                                                         sx={{ color: '#f44336', '&:hover': { color: '#e57373' } }}
                                                         className='tblrow action-btn delete '
                                                         id='deletebtn'
+                                                        onClick={() => handleDelete(permission, 'permission')}
                                                     >
                                                         <DeleteIcon />
                                                     </IconButton>
@@ -240,8 +539,8 @@ export default function UserManagement() {
                         </Table>
                     </TableContainer>
 
-                    <Dialog open={open} onClose={handleClose}>
-                        <DialogTitle>Add New User</DialogTitle>
+                    <Dialog open={open} onClose={handleClose} PaperProps={{ className: 'custom-dialog-paper' }}>
+                        <DialogTitle className='custom-dialog-title'>{isEdit ? 'Update Role' : 'Add New Role'}</DialogTitle>
                         <DialogContent>
                             <TextField
                                 autoFocus
@@ -250,40 +549,117 @@ export default function UserManagement() {
                                 label="Name"
                                 type="text"
                                 fullWidth
+                                required
                                 variant="outlined"
-                                value={newUser.name}
-                                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                                className="custom-textfield"
+                                value={newRoleName}
+                                onChange={(e) => {
+                                    setNewRoleName(e.target.value);
+                                    setRoleNameError('');
+                                }}
+                                error={!!roleNameError}
+                                helperText={roleNameError}
                             />
-                            <TextField
-                                margin="dense"
-                                id="email"
-                                label="Email"
-                                type="email"
-                                fullWidth
-                                variant="outlined"
-                                value={newUser.email}
-                                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                            />
-                            <TextField
-                                margin="dense"
-                                id="role"
-                                label="Role"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                value={newUser.role}
-                                onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                            />
+                            <div style={{ marginTop: 20, marginBottom: 10 }}>Assign Permissions:</div>
+                            <div className="grid-container">
+                                <div>{customList('Available Permissions', left)}</div>
+                                <div>
+                                    <Grid container direction="column" alignItems="center">
+                                        <Button
+                                            sx={{ my: 0.5 }}
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={handleCheckedRight}
+                                            disabled={leftChecked.length === 0}
+                                            aria-label="move selected right"
+                                            className="custom-button"
+                                        >
+                                            &gt;
+                                        </Button>
+                                        <Button
+                                            sx={{ my: 0.5 }}
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={handleCheckedLeft}
+                                            disabled={rightChecked.length === 0}
+                                            aria-label="move selected left"
+                                            className="custom-button"
+                                        >
+                                            &lt;
+                                        </Button>
+                                    </Grid>
+                                </div>
+                                <div>{customList('Assigned Permissions', right)}</div>
+                            </div>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} color="primary">
                                 Cancel
                             </Button>
-                            <Button onClick={handleAddUser} color="primary">
-                                Add
+                            <Button onClick={handleAddOrUpdateRole} color="primary">
+                                {isEdit ? 'Update' : 'Add'}
+                            </Button>
+                        </DialogActions>
+
+                    </Dialog>
+
+                    <Dialog
+                        open={openPermissionDialog}
+                        onClose={handleClosePermissionDialog}
+                        PaperProps={{ className: 'custom-dialog-paper' }}
+                    >
+                        <DialogTitle className='custom-dialog-title'>
+                            {isEdit ? 'Edit Permission' : 'Add New Permission'}
+                        </DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="Name"
+                                type="text"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                className="custom-textfield"
+                                value={newPermissionName}
+                                onChange={(e) => {
+                                    setNewPermissionName(e.target.value);
+                                    setPermissionNameError('');
+                                }}
+                                error={!!permissionNameError}
+                                helperText={permissionNameError}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClosePermissionDialog} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={handleAddOrUpdatePermission} color="primary">
+                                {isEdit ? 'Update' : 'Add'}
                             </Button>
                         </DialogActions>
                     </Dialog>
+
+
+
+
+                    <Dialog open={openDeleteDialog} onClose={handleCancelDelete} PaperProps={{ className: 'custom-dialog-paper' }}>
+                        <DialogTitle className='custom-dialog-title'>Confirm Delete</DialogTitle>
+                        <DialogContent>
+                            Are you sure you want to delete {deleteItem?.name}?
+                        </DialogContent>
+                        <DialogActions className='custom-dialog-actions'>
+                            <Button onClick={handleCancelDelete} color="primary" className="custom-button custom-cancel-button">
+                                Cancel
+                            </Button>
+                            <Button onClick={handleConfirmDelete} color="secondary" className="custom-button custom-confirm-button">
+                                Delete
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
+
                 </>
             )}
         </div>

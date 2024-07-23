@@ -1,0 +1,72 @@
+.custom-dialog-paper {
+    background-color: var(--color-background) !important; /* Set background color */
+    color: var(--text-color-dialog) !important; /* Set text color */
+    padding: 20px;
+    max-width: none !important; /* Remove fixed width */
+    width: auto !important;
+    scrollbar-color: var(--text-color-dialog) var(--color-background);
+
+}
+.custom-list {
+    width: 250px; /* Adjust width as needed */
+    height: 300px; /* Adjust height as needed */
+    overflow-y: auto; /* Allow vertical scroll */
+    scrollbar-width: thin; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    background-color: var(--color-background) !important; /* Set background color */
+    color: var(--text-color-dialog) !important; /* Set text color */
+}
+
+.custom-list::-webkit-scrollbar {
+    width: 8px; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.custom-list::-webkit-scrollbar-thumb {
+    background: var(--color-background) !important; /* Set scrollbar color */
+    border-radius: 4px;
+}
+
+.custom-button {
+    margin: 10px 0; /* Add spacing between buttons */
+}
+
+.custom-dialog-title {
+    color: var(--text-color-dialog) !important; /* Set title text color */
+}
+
+.grid-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding-top: 20px;
+}
+
+.css-ntogzd-MuiList-root {
+    background-color: var(--color-background) !important; /* Set background color */
+    color: var(--text-color-dialog) !important; /* Set text color */
+}
+.css-e6s3aq-MuiCardHeader-root {
+    background-color: var(--color-background) !important; /* Set background color */
+    color: var(--text-color-dialog) !important; /* Set text color */
+}
+.css-1m9pwf3 {
+    color: var(--text-color-dialog) !important; /* Set text color */
+}
+
+.custom-list::-webkit-scrollbar {
+    width: 8px; /* For Chrome, Safari, and Opera */
+}
+
+.custom-list::-webkit-scrollbar-track {
+    background: var(--color-background) !important;
+}
+
+.custom-list::-webkit-scrollbar-thumb {
+    background: var(--color-background) !important;
+    border-radius: 4px;
+}
+
+.custom-list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-background) !important;
+}

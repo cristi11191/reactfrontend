@@ -1,11 +1,6 @@
 
+export const hasPermission = (requiredPermissions = []) => {
 
-export const hasPermission = (permission) => {
-    const permissions = JSON.parse(localStorage.getItem('permissions')) || [];
-
-    return permissions.includes(permission);
-};
-
-export const getRole = () => {
-    return localStorage.getItem('role');
+    let permissions = localStorage.getItem('permissions');
+    return requiredPermissions.every(permission => permissions.includes(permission));
 };

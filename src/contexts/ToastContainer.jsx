@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import Toast from '../CustomJS/Toast/Toast.jsx';
 import '../CustomJS/Toast/Toast.css'
+import { v4 as uuidv4 } from 'uuid';
 
 const ToastContext = createContext();
 
@@ -14,7 +15,7 @@ const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
     const addToast = useCallback((type, message, duration) => {
-        const id = Date.now();
+        const id = uuidv4(); // Use uuid for unique key
         setToasts((prevToasts) => [...prevToasts, { id, type, message, duration }]);
         setTimeout(() => removeToast(id), duration + 500); // Add slight delay to remove after animation
     }, []);
