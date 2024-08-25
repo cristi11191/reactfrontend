@@ -31,9 +31,10 @@ const Navbar = () => {
         <nav>
             <div className="logo-name">
                 <div className="logo-image">
-                    <Avatar alt="Remy Sharp" src={logo} />
+                    <Avatar alt="Remy Sharp" src={logo}/>
                 </div>
-                <span className="logo_name" id="username">{localStorage.getItem('role')==='Admin' ? 'Administrator' : 'WebStudent'}</span>
+                <span className="logo_name"
+                      id="username">{localStorage.getItem('role') === 'Admin' ? 'Administrator' : 'WebStudent'}</span>
             </div>
             <div className="menu-items">
                 <ul className="nav-links">
@@ -77,14 +78,13 @@ const Navbar = () => {
                         };
 
 
-
                         const canRead = checkPermission(config.permissions, 'read');
                         if (canRead) {
                             const IconComponent = config.icon;
                             return (
                                 <li key={key}>
                                     <Link to={config.path}>
-                                        <IconComponent className="nav-imgs" />
+                                        <IconComponent className="nav-imgs"/>
                                         <span className="link-name">{config.label}</span>
                                     </Link>
                                 </li>
@@ -92,6 +92,7 @@ const Navbar = () => {
                         }
                         return null;
                     })}
+
                 </ul>
                 <ul className="logout-mode">
 

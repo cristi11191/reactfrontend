@@ -5,7 +5,7 @@
     left: 10px;
     display: flex;
     align-items: center;
-    height: calc(100% - 90px);
+    height: calc(100% - 190px);
     flex-direction: column;
     justify-content: space-between;
 }
