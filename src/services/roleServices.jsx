@@ -29,10 +29,6 @@ const RoleServices = {
         const response = await api.get(`/roles/${id}/permissions`);
         return response.data;
     },
-    addPermissionsToRole: async(roleData) => {
-        const response = await api.post(`/role-permissions`, roleData);
-        return response.data;
-    },
     updateRolePermissions: async (id, permissions) => {
         try {
             const response = await api.put(`/roles/${id}/permissions`, { permissions });

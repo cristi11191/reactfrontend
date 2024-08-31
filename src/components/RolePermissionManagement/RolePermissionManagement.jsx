@@ -407,7 +407,7 @@ export default function RolePermissionManagement() {
                     const selectedPermissions = right.map(permission => permission.name);
                     const permissionsWithDeps = getPermissionsWithDependencies(selectedPermissions);
                     const permissionsWithDepsIds = permissionsWithDeps.map(name => permissionNameToIdMap[name]);
-                    await RoleServices.addPermissionsToRole({ role_id: newRole.id, permissions: permissionsWithDepsIds });
+                    await RoleServices.updateRolePermissions(newRole.id, permissionsWithDepsIds);
                 }
             }
 
