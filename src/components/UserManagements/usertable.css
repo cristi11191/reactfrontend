@@ -53,7 +53,7 @@ body.dark .tabletext {
 body.dark {
     --edit-btn-color: #ffa726;
     --delete-btn-color: #f44336;
-    --table-background: rgba(82, 82, 82, 0.67);
+    --table-background: rgba(76, 76, 76, 0.67);
     --text-color-dialog: #ffffff;
 }
 

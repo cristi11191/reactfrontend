@@ -8,6 +8,11 @@ const useSidebar = () => {
 
     useEffect(() => {
         const sidebar = document.querySelector('nav');
+
+        if (!sidebar) {
+            return;
+        }
+
         if (isSidebarOpen) {
             sidebar.classList.remove('close');
             localStorage.setItem('status', 'open');

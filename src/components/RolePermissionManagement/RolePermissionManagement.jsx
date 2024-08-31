@@ -83,8 +83,9 @@ export default function RolePermissionManagement() {
         permission.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const leftChecked = intersection(checked, left);
-    const rightChecked = intersection(checked, right);
+    const leftChecked = Array.isArray(checked) && Array.isArray(left) ? intersection(checked, left) : [];
+    const rightChecked = Array.isArray(checked) && Array.isArray(right) ? intersection(checked, right) : [];
+
 
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
@@ -99,14 +100,19 @@ export default function RolePermissionManagement() {
         setChecked(newChecked);
     };
 
+    const isChecked = (value) => {
+        return checked.some((item) => item.id === value.id); // Assuming value is an object with an id
+    };
 
-    const numberOfChecked = (items) => intersection(checked, items).length;
+    const numberOfChecked = (items) => {
+        return items.filter((item) => isChecked(item)).length; // Count checked items
+    };
 
     const handleToggleAll = (items) => () => {
         if (numberOfChecked(items) === items.length) {
-            setChecked(not(checked, items));
+            setChecked([]); // Uncheck all
         } else {
-            setChecked(union(checked, items));
+            setChecked(items); // Check all
         }
     };
 
@@ -192,7 +198,7 @@ export default function RolePermissionManagement() {
                 }
                 title={title}
                 subheader={`${numberOfChecked(items)}/${items.length} selected`}
-                style={{ color: 'var(--text-color-dialog)' }} /* Set text color */
+                style={{ color: 'var(--text-color-dialog)' }} // Set text color
             />
             <Divider />
             <List
@@ -201,7 +207,7 @@ export default function RolePermissionManagement() {
                     height: 'calc(100% - 56px)', // Adjust height to fit the Card
                     bgcolor: 'background.paper',
                     overflow: 'auto',
-                    color: 'var(--text-color-dialog)' /* Set text color */
+                    color: 'var(--text-color-dialog)', // Set text color
                 }}
                 dense
                 component="div"
@@ -214,27 +220,29 @@ export default function RolePermissionManagement() {
                         <ListItemButton
                             key={value.id}
                             role="listitem"
-                            onClick={handleToggle(value)}
-                            style={{ color: 'var(--text-color-dialog)' }} /* Set text color */
+                            onClick={handleToggle(value)} // Ensure to pass the value correctly
+                            style={{ color: 'var(--text-color-dialog)' }} // Set text color
                         >
                             <ListItemIcon>
                                 <Checkbox
-                                    checked={checked.indexOf(value) !== -1}
+                                    checked={isChecked(value)} // Use the isChecked function
                                     tabIndex={-1}
                                     disableRipple
                                     inputProps={{
                                         'aria-labelledby': labelId,
                                     }}
-                                    style={{ color: 'var(--text-color-dialog)' }} /* Set text color */
+                                    style={{ color: 'var(--text-color-dialog)' }} // Set text color
                                 />
                             </ListItemIcon>
-                            <ListItemText id={labelId} primary={value.name} style={{ color: 'var(--text-color-dialog)' }} /* Set text color */ />
+                            <ListItemText id={labelId} primary={value.name} style={{ color: 'var(--text-color-dialog)' }} // Set text color
+                            />
                         </ListItemButton>
                     );
                 })}
             </List>
         </Card>
     );
+
 
 
 
@@ -278,14 +286,13 @@ export default function RolePermissionManagement() {
             setLeft(not(permissions, role.permissions));
         } else {
             // When adding a new role
-            setIsEdit(false);  // Ensure this is set to false for adding
+            setIsEdit(false); // Ensure this is set to false for adding
             setCurrentRole(null);
             setNewRoleName('');
-            setRight([]);  // Clear the right side (assigned permissions)
-            setLeft(permissions);  // Reset the left side (available permissions)
+            setRight([]); // Clear the right side (assigned permissions)
+            setLeft(permissions); // Reset the left side (available permissions)
         }
-        console.log(isEdit,role);
-        setOpen(true);  // Open the dialog
+        setOpen(true); // Open the dialog
     };
 
 
@@ -431,7 +438,7 @@ export default function RolePermissionManagement() {
             ) : (
                 <>
                     {hasPermission([RoleManagementPermissions.role.create]) && (
-                        <Button className='btn-add' variant="contained" color="primary" onClick={handleClickOpen}>
+                        <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen(null)}>
                             Add Role
                         </Button>
                     )}
@@ -441,7 +448,7 @@ export default function RolePermissionManagement() {
                         <Table sx={{ minWidth: 650 }} size="small" aria-label="roles table">
                             <TableHead>
                                 <TableRow className='tblrows'>
-                                    <TableCell className='tabletext tblrow'>Role ID</TableCell>
+                                    <TableCell align="right" className='tabletext tblrow'>Role ID</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>Role Name</TableCell>
                                     <TableCell align="right" className='tabletext tblrow permission-column'>Permissions</TableCell>
                                     {showRoleActionsColumn && (
@@ -455,7 +462,7 @@ export default function RolePermissionManagement() {
                                         key={role.id}
                                         sx={{ '&:last-child td, &:last-child th': { } }}
                                     >
-                                        <TableCell component="th" scope="row" className='tabletext tblrow'>{role.id}</TableCell>
+                                        <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{role.id}</TableCell>
                                         <TableCell align="right" className='tabletext tblrow'>{role.name}</TableCell>
                                         <TableCell align="right" className='tabletext tblrow permission-column'>
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
@@ -512,7 +519,7 @@ export default function RolePermissionManagement() {
                     )}
 
                     {hasPermission([RoleManagementPermissions.permission.create]) && (
-                        <Button className='btn-add permission' variant="contained" color="primary" onClick={handleOpenPermissionDialog}>
+                        <Button className='btn-add permission' variant="contained" color="primary" onClick={() => handleOpenPermissionDialog(null)}>
                             Add Permission
                         </Button>
                     )}
@@ -522,7 +529,7 @@ export default function RolePermissionManagement() {
                         <Table sx={{ minWidth: 650 }} size="small" aria-label="permissions table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className='tabletext tblrow'>Permission ID</TableCell>
+                                    <TableCell align="right" className='tabletext tblrow'>Permission ID</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>Permission Name</TableCell>
                                     {showPermissionActionsColumn && (
                                         <TableCell align="right" className='tabletext tblrow'>Actions</TableCell>
@@ -535,7 +542,7 @@ export default function RolePermissionManagement() {
                                         key={permission.id}
                                         sx={{ '&:last-child td, &:last-child th': {  width: '10px' } }}
                                     >
-                                        <TableCell component="th" scope="row" className='tabletext tblrow'>{permission.id}</TableCell>
+                                        <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{permission.id}</TableCell>
                                         <TableCell align="right" className='tabletext tblrow'>{permission.name}</TableCell>
                                         {showPermissionActionsColumn && (
                                             <TableCell align="right">

@@ -162,7 +162,7 @@ export default function UserManagement() {
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
                             <TableRow className='tblrow'>
-                                <TableCell className='tabletext tblrow'>ID</TableCell>
+                                <TableCell align="right" className='tabletext tblrow'>ID</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Name</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Email</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Role</TableCell>
@@ -178,7 +178,7 @@ export default function UserManagement() {
                                     sx={{ border: 0 }}
                                     className='tblrow'
                                 >
-                                    <TableCell component="th" scope="row" className='tabletext tblrow'>{user.id}</TableCell>
+                                    <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{user.id}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.name}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.email}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.role.name}</TableCell>

@@ -3,7 +3,12 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './Toast.css'; // Assuming you have the CSS from the original Toasty.js
 
-const Toast = ({ type, message, duration, onClose }) => {
+const Toast = ({
+                   type,
+                   message,
+                   duration = 4000, // Default value for duration
+                   onClose
+               }) => {
     useEffect(() => {
         if (duration > 0) {
             const timer = setTimeout(onClose, duration);
@@ -25,8 +30,6 @@ Toast.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-Toast.defaultProps = {
-    duration: 4000,
-};
+// Removed Toast.defaultProps since we're using default parameters now
 
 export default Toast;

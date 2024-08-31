@@ -14,10 +14,14 @@ export const useToasts = () => {
 const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
-    const addToast = useCallback((type, message, duration) => {
+    const addToast = useCallback((type, message, duration = 4000) => {
         const id = uuidv4(); // Use uuid for unique key
         setToasts((prevToasts) => [...prevToasts, { id, type, message, duration }]);
-        setTimeout(() => removeToast(id), duration + 500); // Add slight delay to remove after animation
+
+        const timer = setTimeout(() => removeToast(id), duration + 500); // Add slight delay to remove after animation
+
+        // Clear timer on component unmount or if duration changes
+        return () => clearTimeout(timer);
     }, []);
 
     const removeToast = useCallback((id) => {
