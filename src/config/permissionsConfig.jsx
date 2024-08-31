@@ -1,9 +1,9 @@
 // Import your icons and components
 import {UilEstate, UilFilesLandscapes, UilUser} from '@iconscout/react-unicons';
-import Dashboard from '../views/Dashboard';
-import AdminPanel from '../views/AdminPanel';
-import UserManagement from '../views/UserManagement'; // Example component
-import RolePermissionManagement from '../views/RolePermissionManagement.jsx'
+import Dashboard from '../components/Dashboard/Dashboard.jsx';
+import AdminPanel from '../components/AdminPanel/AdminPanel.jsx';
+import UserManagement from '../components/UserManagements/UserManagement.jsx'; // Example component
+import RolePermissionManagement from '../components/RolePermissionManagement/RolePermissionManagement.jsx'
 
 export const permissionsConfig = {
 
@@ -16,13 +16,13 @@ export const permissionsConfig = {
             read: 'view_dashboard',
         }
     },
-    view_adminpanel: {
+    view_admin: {
         component: AdminPanel,
         label: 'Admin Panel',
         icon: UilEstate,
-        path: '/adminpanel',
+        path: '/admin',
         permissions: {
-            read: 'view_adminpanel',
+            read: 'view_admin',
         }
     },
     user_management: {
@@ -41,7 +41,7 @@ export const permissionsConfig = {
         component: RolePermissionManagement,
         label: 'Role/Permission',
         icon: UilUser,
-        path: '/roleandpermission',
+        path: '/roles',
         permissions: {
             role: {
                     read: 'read_role',

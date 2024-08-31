@@ -17,13 +17,13 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { hasPermission } from '../utils/permissions';
-import { permissionsConfig } from '../config/permissionsConfig';
-import '../styles/styles.css';
-import { fetchAllUsers, createUser, updateUserById,deleteUserById } from "../services/userServices.jsx";
-import RoleServices  from "../services/roleServices.jsx";
+import { hasPermission } from '../../utils/permissions.jsx';
+import { permissionsConfig } from '../../config/permissionsConfig.jsx';
+import '../../styles/styles.css';
+import { fetchAllUsers, createUser, updateUserById,deleteUserById } from "../../services/userServices.jsx";
+import RoleServices  from "../../services/roleServices.jsx";
 import MenuItem from '@mui/material/MenuItem';
-import SearchBox from "../components/SearchBar.jsx";
+import SearchBox from "../SearchBar/SearchBar.jsx";
 export default function UserManagement() {
 
     const [users, setUsers] = useState([]);

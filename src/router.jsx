@@ -1,5 +1,5 @@
 import {createBrowserRouter, Navigate} from "react-router-dom";
-import Login from "./views/Login.jsx";
+import Login from "./components/Login/Login.jsx";
 import NotFound from "./views/NotFound.jsx";
 import GuestLayout from "./layout/GuestLayout.jsx";
 import DefaultLayout from "./layout/DefaultLayout.jsx";
@@ -24,12 +24,12 @@ const router  = createBrowserRouter([
                 element: <ProtectedRoutes element={<MainContent />} permission={['read_user','read_role']}/>
             },
             {
-                path: '/roleandpermission',
-                element: <ProtectedRoutes element={<MainContent />}/>
+                path: '/roles',
+                element: <ProtectedRoutes element={<MainContent />} permission={['read_role','read_permission']}/>
             },
             {
-                path: '/adminpanel',
-                element: <ProtectedRoutes element={<MainContent />} />
+                path: '/admin',
+                element: <ProtectedRoutes element={<MainContent />} permission={['view_admin']} />
             }
         ]
     },

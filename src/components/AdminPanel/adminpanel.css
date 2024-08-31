@@ -1,0 +1,49 @@
+
+.counter-section i { display:block; margin:0 0 10px}
+.counter-section span.counter { font-size:40px; color:#000; line-height:60px; display:block; font-family: "Oswald",sans-serif; letter-spacing: 2px}
+.counter-title{ font-size:12px; letter-spacing:2px; text-transform: uppercase}
+.counter-icon {top:25px; position:relative}
+.counter-style2 .counter-title {letter-spacing: 0.55px; float: left;}
+.counter-style2 span.counter {letter-spacing: 0.55px; float: left; margin-right: 10px;}
+.counter-style2 i {float: right; line-height: 26px; margin: 0 10px 0 0}
+.counter-subheadline span {float: right;}
+
+.medium-icon {
+    font-size: 40px !important;
+    margin-bottom: 15px !important;
+}
+
+.container {
+    display: flex;
+    justify-content: center; /* Centers the row horizontally */
+    margin-top:200px;
+}
+
+.counter-row {
+    display: flex;
+    justify-content: space-around; /* Distributes the counters evenly */
+    align-items: center; /* Aligns counters vertically in the center */
+    width: 100%; /* Takes full width of the container */
+}
+
+.counter-section {
+    flex: 1; /* Ensures all counters take up equal space */
+    padding: 20px; /* Adds some padding around each counter */
+}
+
+.medium-icon {
+    font-size: 2rem; /* Adjust icon size as needed */
+    margin-bottom: 10px;
+}
+
+.counter-number {
+    font-size: 2rem;
+    display: block;
+    margin-top: 5px;
+}
+
+.counter-title {
+    margin-top: 10px;
+    font-size: 1.25rem;
+}
+

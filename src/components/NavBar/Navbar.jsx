@@ -2,13 +2,13 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 import { UilMoon, UilSignout} from '@iconscout/react-unicons';
-import useDarkMode from '../hooks/useDarkMode';
+import useDarkMode from '../../hooks/useDarkMode.jsx';
 import Avatar from '@mui/material/Avatar';
-import '../styles/styles.css'
-import { permissionsConfig } from '../config/permissionsConfig';
-import { hasPermission } from '../utils/permissions';
+import '../../styles/styles.css'
+import { permissionsConfig } from '../../config/permissionsConfig.jsx';
+import { hasPermission } from '../../utils/permissions.jsx';
 
 const Navbar = () => {
     // eslint-disable-next-line no-unused-vars

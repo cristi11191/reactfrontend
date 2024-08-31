@@ -1,9 +1,9 @@
-@import url('./navbar.css');
-@import url('./searchbar.css');
-@import url('./dashboard.css');
-@import url('./login.css');
-@import url('./usertable.css');
-@import url('./rolepermission.css');
+@import url('../components/NavBar/navbar.css');
+@import url('../components/SearchBar/searchbar.css');
+@import url('../components/Dashboard/dashboard.css');
+@import url('../components/Login/login.css');
+@import url('../components/UserManagements/usertable.css');
+@import url('../components/RolePermissionManagement/rolepermission.css');
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
 *{

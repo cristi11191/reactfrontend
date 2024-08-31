@@ -27,17 +27,18 @@ import {
     Divider
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
-import RoleServices from "../services/roleServices.jsx";
-import PermissionServices from "../services/permissionServices.jsx";
-import { hasPermission } from '../utils/permissions';
-import { permissionsConfig } from '../config/permissionsConfig';
-import '../styles/styles.css';
-import {permissionDependencies} from "../hooks/permissionsDependencies.jsx";
+import RoleServices from "../../services/roleServices.jsx";
+import PermissionServices from "../../services/permissionServices.jsx";
+import { hasPermission } from '../../utils/permissions.jsx';
+import { permissionsConfig } from '../../config/permissionsConfig.jsx';
+import '../../styles/styles.css';
+import {permissionDependencies} from "../../hooks/permissionsDependencies.jsx";
 
-function not(a, b) {
-    const bIds = new Set(b.map(item => item.id)); // Assuming each item has a unique `id` property
+function not(a, b = []) { // Provide a default empty array for b
+    const bIds = new Set(b.map(item => item.id));
     return a.filter(item => !bIds.has(item.id));
 }
+
 
 function intersection(a, b) {
     return a.filter((value) => b.indexOf(value) !== -1);
@@ -160,7 +161,7 @@ export default function RolePermissionManagement() {
 
 
 
-    const customList = (title, items) => (
+    const customList = (title, items = []) => (
         <Card className="custom-list">
             <CardHeader
                 sx={{ px: 2, py: 1 }}
@@ -227,57 +228,54 @@ export default function RolePermissionManagement() {
 
 
     useEffect(() => {
-
-        const getRoles = async () => {
-            try {
-                const data = await RoleServices.fetchRoles();
-                const rolesWithPermissions = await Promise.all(data.map(async (role) => {
-                    const permissions = await RoleServices.getRolePermissions(role.id);
-                    return { ...role, permissions };
-                }));
-                setRoles(rolesWithPermissions);
-            } catch (error) {
-                console.error('Error fetching roles:', error);
-            }
-        };
-
-        const getPermissions = async () => {
-            try {
-                const data = await PermissionServices.fetchPermissions();
-                setPermissions(data);
-                setLeft(data); // Set all permissions to the left side
-                setRight([]); // Right side should be empty initially
-            } catch (error) {
-                console.error('Error fetching permissions:', error);
-            }
-        };
-
         const fetchData = async () => {
-            await Promise.all([getRoles(), getPermissions()]);
-            setLoading(false);
+            try {
+                const rolesData = await RoleServices.fetchRoles();
+                const permissionsData = await PermissionServices.fetchPermissions();
+
+                const rolesWithPermissions = await Promise.all(rolesData.map(async (role) => {
+                    const rolePermissions = await RoleServices.getRolePermissions(role.id);
+                    return { ...role, permissions: rolePermissions };
+                }));
+
+                setRoles(rolesWithPermissions);
+                setPermissions(permissionsData);
+                setLeft(permissionsData); // Initialize left side with all permissions
+                setRight([]); // Initialize right side as empty
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchData();
     }, []);
 
+
     const { permissions: RoleManagementPermissions } = permissionsConfig.role_and_permission_management;
 
     const handleClickOpen = (role = null) => {
         if (role) {
+            // When editing an existing role
             setIsEdit(true);
             setCurrentRole(role);
             setNewRoleName(role.name);
             setRight(role.permissions);
             setLeft(not(permissions, role.permissions));
         } else {
-            setIsEdit(false);
+            // When adding a new role
+            setIsEdit(false);  // Ensure this is set to false for adding
             setCurrentRole(null);
             setNewRoleName('');
-            setRight([]);
-            setLeft(permissions);
+            setRight([]);  // Clear the right side (assigned permissions)
+            setLeft(permissions);  // Reset the left side (available permissions)
         }
-        setOpen(true);
+        console.log(isEdit,role);
+        setOpen(true);  // Open the dialog
     };
+
 
     const handleClose = () => {
         setOpen(false);

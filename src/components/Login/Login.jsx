@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/styles.css';
+import '../../styles/styles.css';
 import Button from '@mui/material/Button';
-import useDarkMode from "../hooks/useDarkMode.jsx";
-import { useToasts } from "../contexts/ToastContainer.jsx";
-import { fetchCurrentUser, login } from "../services/apiServices.jsx";
+import useDarkMode from "../../hooks/useDarkMode.jsx";
+import { useToasts } from "../../contexts/ToastContainer.jsx";
+import { fetchCurrentUser, login } from "../../services/apiServices.jsx";
 
 export default function Login() {
     const { addToast } = useToasts();

@@ -1,8 +1,8 @@
 import {Navigate, Outlet} from "react-router-dom";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "../components/NavBar/Navbar.jsx";
 import '../styles/styles.css'
 import {UilBars} from "@iconscout/react-unicons";
-import SearchBox from "../components/SearchBar.jsx";
+import SearchBox from "../components/SearchBar/SearchBar.jsx";
 import useSidebar from "../hooks/useSidebar.jsx";
 
 export default function DefaultLayout() {
