@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -24,6 +24,7 @@ import { fetchAllUsers, createUser, updateUserById,deleteUserById } from "../../
 import RoleServices  from "../../services/roleServices.jsx";
 import MenuItem from '@mui/material/MenuItem';
 import SearchBox from "../SearchBar/SearchBar.jsx";
+import SearchContext from "../../contexts/SearchContext.jsx";
 export default function UserManagement() {
 
     const [users, setUsers] = useState([]);
@@ -36,6 +37,13 @@ export default function UserManagement() {
     const [currentUser, setCurrentUser] = useState(null); // State to hold the user being edited
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const { searchQuery } = useContext(SearchContext);
+
+    const filteredUsers = users.filter(user =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.role.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
 
     useEffect(() => {
@@ -164,7 +172,7 @@ export default function UserManagement() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {users.map((user) => (
+                            {filteredUsers.map((user) => (
                                 <TableRow
                                     key={user.id}
                                     sx={{ border: 0 }}

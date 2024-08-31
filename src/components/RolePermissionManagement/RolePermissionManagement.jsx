@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -33,6 +33,7 @@ import { hasPermission } from '../../utils/permissions.jsx';
 import { permissionsConfig } from '../../config/permissionsConfig.jsx';
 import '../../styles/styles.css';
 import {permissionDependencies} from "../../hooks/permissionsDependencies.jsx";
+import SearchContext from "../../contexts/SearchContext.jsx";
 
 function not(a, b = []) { // Provide a default empty array for b
     const bIds = new Set(b.map(item => item.id));
@@ -69,7 +70,18 @@ export default function RolePermissionManagement() {
     const [isEdit, setIsEdit] = useState(false);
     const [currentRole, setCurrentRole] = useState(null);
     const [currentPermission, setCurrentPermission] = useState(null);
+    const { searchQuery } = useContext(SearchContext);
 
+    const filteredRoles = roles.filter(role =>
+        role.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        role.permissions.some(permission =>
+            permission.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    );
+
+    const filteredPermission = permissions.filter(permission =>
+        permission.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const leftChecked = intersection(checked, left);
     const rightChecked = intersection(checked, right);
@@ -438,7 +450,7 @@ export default function RolePermissionManagement() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {roles.map((role) => (
+                                {filteredRoles.map((role) => (
                                     <TableRow
                                         key={role.id}
                                         sx={{ '&:last-child td, &:last-child th': { } }}
@@ -518,7 +530,7 @@ export default function RolePermissionManagement() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {permissions.map((permission) => (
+                                {filteredPermission.map((permission) => (
                                     <TableRow
                                         key={permission.id}
                                         sx={{ '&:last-child td, &:last-child th': {  width: '10px' } }}
