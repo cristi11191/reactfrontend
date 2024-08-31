@@ -1,55 +1,65 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
 
-.center-xy {
-    /* width: inherit; */
+
+.not-found-page {
+    background-color: #000; /* Set background to black */
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+    display: flex; /* Use flexbox to center content */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    position: relative; /* Position relative for absolute children */
+}
+
+.not-found-page .center-xy {
+    position: absolute; /* For absolute positioning within container */
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
-    position: absolute;
+    transform: translate(-50%, -50%);
 }
 
-html, body {
+.not-found-page html,
+.not-found-page body {
     font-family: 'Roboto Mono', monospace;
     font-size: 16px;
-    height: 100%;           /* Ensure full height */
-    margin: 0;             /* Remove default margin */
-    padding: 0;            /* Remove default padding */
-    overflow: hidden;      /* Hide scrollbars */
+    height: 100%;            /* Ensure full height */
+    margin: 0;              /* Remove default margin */
+    padding: 0;             /* Remove default padding */
+    overflow: hidden;       /* Hide scrollbars */
 }
 
-html {
+.not-found-page html {
     box-sizing: border-box;
     user-select: none;
 }
 
-body {
-    background-color: #000;
-    display: flex;         /* Use flex to center content */
-    align-items: center;   /* Center vertically */
-    justify-content: center;/* Center horizontally */
+.not-found-page body {
+    background-color: #000 !important;
+    display: flex;          /* Use flex to center content */
+    align-items: center;    /* Center vertically */
+    justify-content: center; /* Center horizontally */
 }
 
-
-*, *:before, *:after {
+.not-found-page *, *:before, *:after {
     box-sizing: inherit;
 }
 
-.container {
+.not-found-page .container {
     width: 100%;
 }
 
-.copy-container {
+.not-found-page .copy-container {
     text-align: center;
 }
 
-p {
+.not-found-page p {
     color: #fff;
     font-size: 24px;
     letter-spacing: .2px;
     margin: 0;
 }
 
-.handle {
+.not-found-page .handle {
     background: #ffe500;
     width: 14px;
     height: 30px;
@@ -59,7 +69,7 @@ p {
     position: absolute;
 }
 
-#cb-replay {
+.not-found-page #cb-replay {
     fill: #666;
     width: 20px;
     margin: 15px;
