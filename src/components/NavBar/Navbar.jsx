@@ -16,6 +16,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+
     const handleLogout = () => {
         // Clear user authentication data (e.g., tokens)
         localStorage.removeItem('token');

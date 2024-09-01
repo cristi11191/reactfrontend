@@ -146,7 +146,7 @@ export default function UserManagement() {
     return (
 
         <div style={{ padding: 20 }}>
-            {hasPermission([permissions.create]) && (
+            {!loading && hasPermission([permissions.create]) && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
                     Add User
                 </Button>
