@@ -80,26 +80,21 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover{
 }
 
 @media (max-width: 1000px) {
-    nav{
-        width: 73px;
-    }
-    nav.close{
-        width: 250px;
-    }
+
     nav .logo_name{
         opacity: 0;
         pointer-events: none;
     }
     nav.close .logo_name{
-        opacity: 1;
+        opacity: 0;
         pointer-events: auto;
     }
     nav li a .link-name{
-        opacity: 0;
+        opacity: 1;
         pointer-events: none;
     }
     nav.close li a .link-name{
-        opacity: 1;
+        opacity: 0;
         pointer-events: auto;
     }
     nav ~ .dashboard{
@@ -135,12 +130,7 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover{
     }
 }
 @media (max-width: 400px) {
-    nav{
-        width: 0;
-    }
-    nav.close{
-        width: 73px;
-    }
+
     nav .logo_name{
         opacity: 0;
         pointer-events: none;

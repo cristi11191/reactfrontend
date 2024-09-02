@@ -117,3 +117,121 @@ nav.close ~ .dashboard .top{
     left: 73px; /* Adjusted position when sidebar is closed */
     width: calc(100% - 73px); /* Adjusted width when sidebar is closed */
 }
+
+/* Media Queries for Responsive Dashboard */
+
+/* When the screen width is 1000px or less */
+@media (max-width: 1000px) {
+    .dashboard {
+        left: 73px;
+        width: calc(100% - 73px);
+    }
+    nav.close ~ .dashboard {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+
+    .dashboard .top {
+        left: 73px;
+        width: calc(100% - 73px);
+    }
+    nav.close ~ .dashboard .top {
+        left: 250px;
+        width: calc(100% - 250px);
+    }
+
+    .top .search-box {
+        width: 100px;
+        margin: 0 20px; /* Adjust margins to fit smaller screens */
+    }
+}
+
+/* When the screen width is 780px or less */
+@media (max-width: 780px) {
+    .dashboard {
+        left: 60px;
+        width: calc(100% - 60px);
+    }
+    nav.close ~ .dashboard {
+        left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .dashboard .top {
+        left: 60px;
+        width: calc(100% - 60px);
+    }
+    nav.close ~ .dashboard .top {
+        left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .top .search-box {
+        max-width: 200px;
+        margin: 0 20px; /* Adjust margins to fit smaller screens */
+    }
+}
+
+/* When the screen width is 560px or less */
+@media (max-width: 560px) {
+    .dashboard {
+        left: 50px;
+        width: calc(100% - 50px);
+    }
+    nav.close ~ .dashboard {
+        left: 150px;
+        width: calc(100% - 150px);
+    }
+
+    .dashboard .top {
+        left: 50px;
+        width: calc(100% - 50px);
+    }
+    nav.close ~ .dashboard .top {
+        left: 150px;
+        width: calc(100% - 150px);
+    }
+
+    .top .search-box {
+        max-width: 200px;
+        margin: 0 15px;
+    }
+
+    .dash-content .title .text {
+        font-size: 20px; /* Adjust title font size */
+    }
+}
+
+/* When the screen width is 400px or less */
+@media (max-width: 400px) {
+    .dashboard {
+        left: 0;
+        width: 100%;
+    }
+    nav.close ~ .dashboard {
+        left: 60px;
+        width: calc(100% - 60px);
+    }
+
+    .dashboard .top {
+        left: 0;
+        width: 100%;
+    }
+    nav.close ~ .dashboard .top {
+        left: 60px;
+        width: calc(100% - 60px);
+    }
+
+    .top .search-box {
+        max-width: 200px; /* Further reduce the search box width */
+        margin: 0 10px;
+    }
+
+    .dash-content .title {
+        margin: 40px 0 20px 0; /* Adjust margins for better spacing */
+    }
+
+    .dash-content .title .text {
+        font-size: 18px; /* Further adjust title font size */
+    }
+}
