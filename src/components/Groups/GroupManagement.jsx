@@ -20,7 +20,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { hasPermission } from '../../utils/permissions.jsx';
 import { permissionsConfig } from '../../config/permissionsConfig.jsx';
 import '../../styles/styles.css';
-import { fetchGroup } from "../../services/groupServices.jsx";
+import GroupServices from "../../services/groupServices.jsx";
 import SearchContext from "../../contexts/SearchContext.jsx";
 
 export default function GroupManagement() {
@@ -42,7 +42,7 @@ export default function GroupManagement() {
     useEffect(() => {
         const getGroups = async () => {
             try {
-                const groupsData = await fetchGroup();
+                const groupsData = await GroupServices.fetchGroup();
                 setGroups(groupsData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -77,11 +77,11 @@ export default function GroupManagement() {
     const handleAddOrUpdateGroup = async () => {
         try {
             if (isEditMode && currentGroup) {
-                await updateGroupById(currentGroup.id, newGroup);
+                await GroupServices.updateGroup(currentGroup.id, newGroup);
             } else {
-                await createGroup(newGroup);
+                await GroupServices.createGroup(newGroup);
             }
-            const updatedGroups = await fetchGroup();
+            const updatedGroups = await GroupServices.fetchGroup();
             setGroups(updatedGroups);
             handleClose();
         } catch (error) {
@@ -97,8 +97,8 @@ export default function GroupManagement() {
     const handleConfirmDelete = async () => {
         try {
             if (groupToDelete) {
-                await deleteGroupById(groupToDelete.id);
-                const updatedGroups = await fetchGroup();
+                await GroupServices.deleteGroup(groupToDelete.id);
+                const updatedGroups = await GroupServices.fetchGroup();
                 setGroups(updatedGroups);
             }
             setOpenDeleteDialog(false);
@@ -110,12 +110,12 @@ export default function GroupManagement() {
     const handleCancelDelete = () => {
         setOpenDeleteDialog(false);
     };
-
-    const showActionsColumn = hasPermission([permissionsConfig.update]) || hasPermission([permissionsConfig.delete]);
+    const { permissions } = permissionsConfig.group_management;
+    const showActionsColumn = hasPermission([permissions.update]) || hasPermission([permissions.delete]);
 
     return (
         <div style={{ padding: 20 }}>
-            {!loading && hasPermission([permissionsConfig.create]) && (
+            {!loading && hasPermission([permissions.create]) && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
                     Add Group
                 </Button>
@@ -148,7 +148,7 @@ export default function GroupManagement() {
                                     <TableCell align="right" className='tabletext tblrow'>{group.group_name}</TableCell>
                                     {showActionsColumn && (
                                         <TableCell align="right">
-                                            {hasPermission([permissionsConfig.update]) && (
+                                            {hasPermission([permissions.update]) && (
                                                 <IconButton
                                                     aria-label="edit"
                                                     color="primary"
@@ -160,7 +160,7 @@ export default function GroupManagement() {
                                                     <EditIcon />
                                                 </IconButton>
                                             )}
-                                            {hasPermission([permissionsConfig.delete]) && (
+                                            {hasPermission([permissions.delete]) && (
                                                 <IconButton
                                                     aria-label="delete"
                                                     color="secondary"

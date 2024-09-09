@@ -3,6 +3,7 @@
 @import url('../components/Dashboard/dashboard.css');
 @import url('../components/Login/login.css');
 @import url('../components/UserManagements/usertable.css');
+@import url('../components/Groups/groupstable.css');
 @import url('../components/RolePermissionManagement/rolepermission.css');
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');

@@ -1,4 +1,4 @@
-.tableusers {
+.tablegroups {
     width: 70vw !important;
     margin-top: 10px !important;
     margin-left: 30px;
@@ -10,11 +10,11 @@
     max-width: 250px !important;
 }
 
-body .tableusers {
+body .tablegroups {
     background-color: var(--table-background);
 }
 
-body.dark .tableusers {
+body.dark .tablegroups {
     background-color: var(--table-background);
 }
 body .tabletext {
@@ -58,25 +58,25 @@ body.dark {
 }
 
 /* Add border to table and cells */
-.tableusers, .tableusers th, .tableusers td {
+.tablegroups, .tablegroups th, .tableusers td {
     border: 1px solid #ddd;
 }
 
 /* Add striped effect */
-.tableusers tbody tr:nth-child(odd) {
+.tablegroups tbody tr:nth-child(odd) {
     background-color: #f9f9f9;
 }
 
-body.dark .tableusers tbody tr:nth-child(odd) {
+body.dark .tablegroups tbody tr:nth-child(odd) {
     background-color: #6d6d6d;
 }
 
 /* Add hover effect */
-.tableusers tbody tr:hover {
+.tablegroups tbody tr:hover {
     background-color: #f1f1f1;
 }
 
-body.dark .tableusers tbody tr:hover {
+body.dark .tablegroups tbody tr:hover {
     background-color: #555;
 }
 
