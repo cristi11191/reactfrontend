@@ -9,5 +9,8 @@ export const permissionDependencies = {
     'update_permission': ['read_permission'],
     'delete_permission': ['read_permission'],
     'read_role':['read_permission'],
-    'read_permission':['read_role']
+    'read_permission':['read_role'],
+    'create_group':['read_group'],
+    'update_group':['read_group'],
+    'delete_group':['read_group']
 };

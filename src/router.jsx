@@ -30,6 +30,10 @@ const router  = createBrowserRouter([
             {
                 path: '/admin',
                 element: <ProtectedRoutes element={<MainContent />} permission={['view_admin']} />
+            },
+            {
+                path: '/groups',
+                element: <ProtectedRoutes element={<MainContent />} permission={['read_group']} />
             }
         ]
     },

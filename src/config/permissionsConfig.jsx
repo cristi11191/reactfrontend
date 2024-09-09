@@ -4,6 +4,7 @@ import Dashboard from '../components/Dashboard/Dashboard.jsx';
 import AdminPanel from '../components/AdminPanel/AdminPanel.jsx';
 import UserManagement from '../components/UserManagements/UserManagement.jsx'; // Example component
 import RolePermissionManagement from '../components/RolePermissionManagement/RolePermissionManagement.jsx'
+import GroupManagement from "../components/Groups/GroupManagement.jsx";
 
 export const permissionsConfig = {
 
@@ -55,6 +56,18 @@ export const permissionsConfig = {
                 update: 'update_permission',
                 delete: 'delete_permission',
             }
+        }
+    },
+    group_management: {
+        component: GroupManagement,
+        label: 'Manage Groups',
+        icon: UilUser,
+        path: '/groups',
+        permissions: {
+            read: 'read_group',
+            create: 'create_group',
+            update: 'update_group',
+            delete: 'delete_group',
         }
     },
 
