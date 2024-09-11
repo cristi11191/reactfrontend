@@ -1,9 +1,9 @@
 // src/components/Navbar.js
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
+import React, {useState} from 'react';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 import logo from '../../assets/logo.png';
-import { UilMoon, UilSignout} from '@iconscout/react-unicons';
+import {UilBag, UilMoon, UilSignout} from '@iconscout/react-unicons';
 import useDarkMode from '../../hooks/useDarkMode.jsx';
 import Avatar from '@mui/material/Avatar';
 import '../../styles/styles.css'
@@ -15,6 +15,43 @@ const Navbar = () => {
     const [isDarkMode, toggleDarkMode] = useDarkMode();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isManagementOpen, setIsManagementOpen] = useState(false); // State to handle collapse/expand
+
+    // Function to toggle collapse state
+    const toggleManagementMenu = () => {
+        console.log(isManagementOpen);
+        setIsManagementOpen(!isManagementOpen);
+    };
+
+    // Function to check if a permission exists for a specific action key
+    const checkPermission = (permissions, actionKey) => {
+        if (!permissions || !actionKey) return false;
+
+        // Extract the permission value for the actionKey
+        const permissionValue = permissions[actionKey];
+        if (!permissionValue) return false;
+
+        // Check if the user has the extracted permission
+        return hasPermission([permissionValue]);
+    };
+
+    // Filter out management-related links with required permissions
+    const managementLinks = [
+        { key: 'user_management', label: 'Manage Users', path: permissionsConfig.user_management.path, permissionKey: 'user_management', icon: permissionsConfig.user_management.icon },
+        { key: 'group_management', label: 'Manage Groups', path: permissionsConfig.group_management.path, permissionKey: 'group_management', icon: permissionsConfig.group_management.icon },
+        { key: 'role_and_permission_management', label: 'Role/Permission    ', path: permissionsConfig.role_and_permission_management.path, permissionKey: 'role_and_permission_management', icon: permissionsConfig.role_and_permission_management.icon },
+    ].filter(link => {
+        // Get the permissions object for the current link
+        const linkPermissions = permissionsConfig[link.permissionKey]?.permissions;
+
+        // If the permissions are nested in 'permission', check it
+        if (linkPermissions?.permission) {
+            return checkPermission(linkPermissions.permission, 'read');
+        }
+
+        // Otherwise, check the top-level permissions object
+        return checkPermission(linkPermissions, 'read');
+    });
 
 
     const handleLogout = () => {
@@ -39,53 +76,15 @@ const Navbar = () => {
             </div>
             <div className="menu-items">
                 <ul className="nav-links">
+                    {/* Regular non-management links */}
                     {Object.entries(permissionsConfig).map(([key, config]) => {
-                        // Check if the user has any required permissions for this section
-                        const checkPermission = (permissions, actionKey) => {
-                            if (!permissions || !actionKey) return false;
-
-                            // Helper function to get the permission value for a specific action key
-                            const getPermissionValue = (permissions, actionKey) => {
-                                if (typeof permissions === 'string') {
-                                    return permissions; // Directly return if permissions is a string
-                                }
-
-                                if (typeof permissions === 'object') {
-                                    // Search for the actionKey in flat or nested structure
-                                    for (const key in permissions) {
-                                        if (Object.prototype.hasOwnProperty.call(permissions, key)) {
-                                            const value = permissions[key];
-                                            if (typeof value === 'object') {
-                                                // Check nested objects
-                                                const nestedValue = getPermissionValue(value, actionKey);
-                                                if (nestedValue) return nestedValue;
-                                            } else if (key === actionKey) {
-                                                // Return the permission if the key matches
-                                                return value;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                return null; // Return null if the permission is not found
-                            };
-
-                            // Extract the permission value for the actionKey
-                            const permissionValue = getPermissionValue(permissions, actionKey);
-                            if (!permissionValue) return false;
-
-                            // Check if the user has the extracted permission
-                            return hasPermission([permissionValue]);
-                        };
-
-
                         const canRead = checkPermission(config.permissions, 'read');
-                        if (canRead) {
+                        if (canRead && !['user_management', 'group_management', 'role_and_permission_management'].includes(key)) {
                             const IconComponent = config.icon;
                             return (
                                 <li key={key}>
                                     <Link to={config.path}>
-                                        <IconComponent className="nav-imgs"/>
+                                        <IconComponent className="nav-imgs" />
                                         <span className="link-name">{config.label}</span>
                                     </Link>
                                 </li>
@@ -94,6 +93,29 @@ const Navbar = () => {
                         return null;
                     })}
 
+                    {/* Management menu */}
+                    {managementLinks.length > 0 && (
+                        <li>
+
+                            <a onClick={toggleManagementMenu} className="management-toggle link-name ">
+                                {/* Icon for Management */}
+                                <UilBag className="nav-imgs"/>
+                                <span className="link-name">Management</span>
+                            </a>
+                            {isManagementOpen && (
+                                <ul className="collapsed-management-links nav-links">
+                                    {managementLinks.map(link => (
+                                        <li key={link.key}>
+                                            <Link to={link.path}>
+                                                <link.icon className="nav-imgs"/>
+                                                <span className="link-name">{link.label}</span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </li>
+                    )}
                 </ul>
                 <ul className="logout-mode">
 

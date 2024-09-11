@@ -97,6 +97,13 @@ body.dark li a:hover:before{
     color: var(--black-light-color);
     transition: var(--tran-05);
 }
+
+.management-toggle{
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--black-light-color);
+    transition: var(--tran-05);
+}
 nav.close li a .link-name{
     opacity: 0;
     pointer-events: none;
