@@ -145,7 +145,7 @@ export default function GroupManagement() {
                                     className='tblrow'
                                 >
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{group.id}</TableCell>
-                                    <TableCell align="right" className='tabletext tblrow'>{group.group_name}</TableCell>
+                                    <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{group.group_name}</TableCell>
                                     {showActionsColumn && (
                                         <TableCell align="right">
                                             {hasPermission([permissions.update]) && (
