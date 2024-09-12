@@ -35,10 +35,11 @@ import '../../styles/styles.css';
 import {permissionDependencies} from "../../hooks/permissionsDependencies.jsx";
 import SearchContext from "../../contexts/SearchContext.jsx";
 
-function not(a, b = []) { // Provide a default empty array for b
-    const bIds = new Set(b.map(item => item.id));
-    return a.filter(item => !bIds.has(item.id));
+function not(a, b = []) {
+    const bNames = new Set(b); // Use a Set of names from b
+    return a.filter(item => !bNames.has(item.name)); // Filter based on names
 }
+
 
 
 function intersection(a, b) {
@@ -72,23 +73,30 @@ export default function RolePermissionManagement() {
     const [currentPermission, setCurrentPermission] = useState(null);
     const { searchQuery } = useContext(SearchContext);
 
-    const filteredRoles = roles.filter(role =>
-        role.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        role.permissions.some(permission =>
-            permission.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+    const filteredRoles = (roles || []).filter(role => {
+        const nameMatches = role.name && role.name.toLowerCase().includes(searchQuery);
+
+        // Ensure permissions are valid and check for matches
+        const permissionsMatch = Array.isArray(role.permissions) && role.permissions.some(permission =>
+            typeof permission === 'string' && permission.toLowerCase().includes(searchQuery) // Check if permission is a string
+        );
+
+        return nameMatches || permissionsMatch;
+    });
+
+// Filter permissions based on the search query
+    const filteredPermissions = (permissions || []).filter(permission =>
+        permission.name && permission.name.toLowerCase().includes(searchQuery) // Check if permission.name exists
     );
 
-    const filteredPermission = permissions.filter(permission =>
-        permission.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+
 
     const leftChecked = Array.isArray(checked) && Array.isArray(left) ? intersection(checked, left) : [];
     const rightChecked = Array.isArray(checked) && Array.isArray(right) ? intersection(checked, right) : [];
 
 
     const handleToggle = (value) => () => {
-        const currentIndex = checked.indexOf(value);
+        const currentIndex = checked.indexOf(value); // Assuming value is an object with a name property
         const newChecked = [...checked];
 
         if (currentIndex === -1) {
@@ -100,9 +108,11 @@ export default function RolePermissionManagement() {
         setChecked(newChecked);
     };
 
+
     const isChecked = (value) => {
-        return checked.some((item) => item.id === value.id); // Assuming value is an object with an id
+        return checked.includes(value); // Assuming value is an object with a name property
     };
+
 
     const numberOfChecked = (items) => {
         return items.filter((item) => isChecked(item)).length; // Count checked items
@@ -117,20 +127,43 @@ export default function RolePermissionManagement() {
     };
 
     const handleCheckedRight = () => {
-        // Move only checked permissions from left to right
-        const permissionsToMove = leftChecked;
-        setRight(right.concat(permissionsToMove));
-        setLeft(not(left, permissionsToMove));
+        const permissionsToMove = leftChecked; // Array of checked permissions from the left list
+
+        // Update the right permissions
+        setRight(prevRight => {
+            return [...prevRight, ...permissionsToMove]; // Add permissions to the right
+        });
+
+        // Update the left permissions by filtering out the moved permissions
+        setLeft(prevLeft => {
+            const newLeft = prevLeft.filter(item =>
+                !permissionsToMove.some(perm => perm.name === item.name) // Remove items whose names match the ones being moved
+            );
+            return newLeft; // Update the left list
+        });
+
         setChecked([]); // Uncheck all after moving
     };
 
     const handleCheckedLeft = () => {
-        // Move only checked permissions from right to left
-        const permissionsToMove = rightChecked;
-        setLeft(left.concat(permissionsToMove));
-        setRight(not(right, permissionsToMove));
+        const permissionsToMove = rightChecked; // Array of checked permissions from the right list
+
+        // Update the left permissions
+        setLeft(prevLeft => {
+            return [...prevLeft, ...permissionsToMove]; // Add permissions to the left
+        });
+
+        // Update the right permissions by filtering out the moved permissions
+        setRight(prevRight => {
+            const newRight = prevRight.filter(item =>
+                !permissionsToMove.some(perm => perm.name === item.name) // Remove items whose names match the ones being moved
+            );
+            return newRight; // Update the right list
+        });
+
         setChecked([]); // Uncheck all after moving
     };
+
 
     const handleOpenPermissionDialog = (permission = null) => {
         console.log(isEdit);
@@ -251,14 +284,10 @@ export default function RolePermissionManagement() {
         const fetchData = async () => {
             try {
                 const rolesData = await RoleServices.fetchRoles();
+                console.log(rolesData);
                 const permissionsData = await PermissionServices.fetchPermissions();
-
-                const rolesWithPermissions = await Promise.all(rolesData.map(async (role) => {
-                    const rolePermissions = await RoleServices.getRolePermissions(role.id);
-                    return { ...role, permissions: rolePermissions };
-                }));
-
-                setRoles(rolesWithPermissions);
+                console.log(permissionsData);
+                setRoles(rolesData);
                 setPermissions(permissionsData);
                 setLeft(permissionsData); // Initialize left side with all permissions
                 setRight([]); // Initialize right side as empty
@@ -282,8 +311,15 @@ export default function RolePermissionManagement() {
             setIsEdit(true);
             setCurrentRole(role);
             setNewRoleName(role.name);
-            setRight(role.permissions);
+            const assignedPermissions = permissions.filter(permission =>
+                role.permissions.includes(permission.name) // Match by name
+            );
+
+            setRight(assignedPermissions);
+
             setLeft(not(permissions, role.permissions));
+            console.log('Available Permissions:', right);
+
         } else {
             // When adding a new role
             setIsEdit(false); // Ensure this is set to false for adding
@@ -291,6 +327,7 @@ export default function RolePermissionManagement() {
             setNewRoleName('');
             setRight([]); // Clear the right side (assigned permissions)
             setLeft(permissions); // Reset the left side (available permissions)
+
         }
         setOpen(true); // Open the dialog
     };
@@ -370,13 +407,15 @@ export default function RolePermissionManagement() {
             return;
         }
         const permissionNameToIdMap = permissions.reduce((map, permission) => {
-            map[permission.name] = permission.id;
+            map[permission.name] = permission.name;
             return map;
         }, {});
 
         // Function to get permissions with their dependencies
         const getPermissionsWithDependencies = (selectedPermissions) => {
             const allPermissions = new Set(selectedPermissions);
+            console.log('passed:', allPermissions);
+
 
             selectedPermissions.forEach(permission => {
                 if (permissionDependencies[permission]) {
@@ -386,37 +425,34 @@ export default function RolePermissionManagement() {
                 }
             });
 
+            console.log('The last Things:', Array.from(allPermissions));
             return Array.from(allPermissions);
         };
 
 
         try {
             if (isEdit) {
+                // Update existing role
                 console.log("Updating role:", currentRole.id, newRoleName.trim());
-                await RoleServices.updateRole(currentRole.id, { name: newRoleName.trim() });
+                // Get permissions from the response, transforming to an array of names
 
-                if (right.length > 0) {
-                    const selectedPermissions = right.map(permission => permission.name);
-                    const permissionsWithDeps = getPermissionsWithDependencies(selectedPermissions);
-                    const permissionsWithDepsIds = permissionsWithDeps.map(name => permissionNameToIdMap[name]);
-                    await RoleServices.updateRolePermissions(currentRole.id, permissionsWithDepsIds);
-                }
+                const permissionNames = right.map(perm => perm.name); // Transform to names
+                const permissionsWithDeps = getPermissionsWithDependencies(permissionNames);
+                console.log(permissionsWithDeps);
+                await RoleServices.updateRole(currentRole.id, { name: newRoleName.trim(), permissions: permissionsWithDeps });
+
             } else {
-                const newRole = await RoleServices.createRole({ name: newRoleName.trim() });
-                if (right.length > 0) {
-                    const selectedPermissions = right.map(permission => permission.name);
-                    const permissionsWithDeps = getPermissionsWithDependencies(selectedPermissions);
-                    const permissionsWithDepsIds = permissionsWithDeps.map(name => permissionNameToIdMap[name]);
-                    await RoleServices.updateRolePermissions(newRole.id, permissionsWithDepsIds);
-                }
+                // Create new role
+                const permissionsWithDeps = getPermissionsWithDependencies(right);
+                const permissionNames = permissionsWithDeps.map(perm => perm.name); // Transform to names
+
+                const newRole = await RoleServices.createRole({ name: newRoleName.trim(), permissions: permissionNames });
+                console.log("Created new role:", newRole.id, newRoleName.trim());
             }
 
             const data = await RoleServices.fetchRoles();
-            const rolesWithPermissions = await Promise.all(data.map(async (role) => {
-                const permissions = await RoleServices.getRolePermissions(role.id);
-                return { ...role, permissions };
-            }));
-            setRoles(rolesWithPermissions);
+
+            setRoles(data);
             handleClose();
         } catch (error) {
             console.error('Error adding or updating role:', error);
@@ -468,10 +504,15 @@ export default function RolePermissionManagement() {
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                                                 <div style={{ marginRight: 8 }}>
                                                     {expandedRoleId === role.id
-                                                        ? role.permissions.map(permission => permission.name).join(', ')
-                                                        : role.permissions.length > 0
-                                                            ? role.permissions[0].name + (role.permissions.length > 1 ? ' ...' : '')
-                                                            : ''}
+                                                        ? Array.isArray(role.permissions) // Check if permissions is an array
+                                                            ? role.permissions.join(', ') // Join if it's an array
+                                                            : role.permissions // Otherwise, just display the permission directly
+                                                        : Array.isArray(role.permissions) && role.permissions.length > 0
+                                                            ? role.permissions[0] + (role.permissions.length > 1 ? ' ...' : '') // Display first permission with ellipsis
+                                                            : ''
+                                                    }
+
+
                                                 </div>
                                                 <IconButton
                                                     onClick={() => handleTogglePermissions(role.id)}
@@ -537,7 +578,7 @@ export default function RolePermissionManagement() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {filteredPermission.map((permission) => (
+                                {filteredPermissions.map((permission) => (
                                     <TableRow
                                         key={permission.id}
                                         sx={{ '&:last-child td, &:last-child th': {  width: '10px' } }}

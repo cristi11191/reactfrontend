@@ -29,15 +29,6 @@ const RoleServices = {
         const response = await api.get(`/roles/${id}/permissions`);
         return response.data;
     },
-    updateRolePermissions: async (id, permissions) => {
-        try {
-            const response = await api.put(`/roles/${id}/permissions`, { permissions });
-            return response.data;
-        } catch (error) {
-            console.error('Error updating role permissions:', error.response ? error.response.data : error.message);
-            throw error;
-        }
-    },
 
 };
 
