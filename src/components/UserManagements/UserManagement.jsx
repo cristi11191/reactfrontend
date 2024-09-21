@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,24 +17,21 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { hasPermission } from '../../utils/permissions.jsx';
-import { permissionsConfig } from '../../config/permissionsConfig.jsx';
-import '../../styles/styles.css';
-import { fetchAllUsers, createUser, updateUserById,deleteUserById } from "../../services/userServices.jsx";
-import RoleServices  from "../../services/roleServices.jsx";
 import MenuItem from '@mui/material/MenuItem';
-import SearchBox from "../SearchBar/SearchBar.jsx";
 import SearchContext from "../../contexts/SearchContext.jsx";
-export default function UserManagement() {
+import { fetchAllUsers, createUser, updateUserById, deleteUserById } from "../../services/userServices.jsx";
+import RoleServices from "../../services/roleServices.jsx";
+import '../../styles/styles.css';
 
+export default function UserManagement() {
     const [users, setUsers] = useState([]);
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true); // New loading state
-    const [newUser, setNewUser] = useState({ name: '', email: '', role: '' });
-    const [roles, setRoles] = useState([{ id: 1, name: 'Student' }]); // Example role options
-    const [emailError, setEmailError] = useState(''); // State for email error message
-    const [isEditMode, setIsEditMode] = useState(false); // New state for edit mode
-    const [currentUser, setCurrentUser] = useState(null); // State to hold the user being edited
+    const [loading, setLoading] = useState(true);
+    const [newUser, setNewUser] = useState({ name: '', email: '', role_id: '' });
+    const [roles, setRoles] = useState([]);
+    const [emailError, setEmailError] = useState('');
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const { searchQuery } = useContext(SearchContext);
@@ -44,7 +41,6 @@ export default function UserManagement() {
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.role.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
 
     useEffect(() => {
         const getUsersAndRoles = async () => {
@@ -62,7 +58,10 @@ export default function UserManagement() {
         getUsersAndRoles();
     }, []);
 
-    const { permissions } = permissionsConfig.user_management;
+    // Role-based access check
+    const userRole = localStorage.getItem('role');
+    const canAddOrEdit = userRole === 'Admin'; // Only admins can add or edit users
+    const canDelete = userRole === 'Admin'; // Only admins can delete users
 
     const handleClickOpen = (user = null) => {
         if (user) {
@@ -71,12 +70,11 @@ export default function UserManagement() {
             setNewUser({
                 name: user.name,
                 email: user.email,
-                password: '', // Do not pre-fill password
                 role_id: user.role_id
             });
         } else {
             setIsEditMode(false);
-            setNewUser({ name: '', email: '', password: '', role_id: '1' });
+            setNewUser({ name: '', email: '', role_id: roles[0]?.id || '' });
         }
         setEmailError('');
         setOpen(true);
@@ -90,7 +88,7 @@ export default function UserManagement() {
 
     const handleEmailChange = (e) => {
         const email = e.target.value;
-        setNewUser((prev) => ({ ...prev, email }));
+        setNewUser(prev => ({ ...prev, email }));
 
         const emailExists = users.some(user => user.email === email && (!isEditMode || user.id !== currentUser.id));
         if (emailExists) {
@@ -142,11 +140,9 @@ export default function UserManagement() {
         setOpenDeleteDialog(false);
     };
 
-    const showActionsColumn = hasPermission([permissions.update]) || hasPermission([permissions.delete]);
     return (
-
         <div style={{ padding: 20 }}>
-            {!loading && hasPermission([permissions.create]) && (
+            {!loading && canAddOrEdit && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
                     Add User
                 </Button>
@@ -157,7 +153,6 @@ export default function UserManagement() {
                     <CircularProgress />
                 </div>
             ) : (
-
                 <TableContainer component={Paper} style={{ marginTop: 20 }} className='tableusers'>
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
@@ -166,37 +161,33 @@ export default function UserManagement() {
                                 <TableCell align="right" className='tabletext tblrow'>Name</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Email</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Role</TableCell>
-                                {showActionsColumn && (
+                                {(canAddOrEdit || canDelete) && (
                                     <TableCell align="right" className='tabletext tblrow'>Actions</TableCell>
                                 )}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {filteredUsers.map((user) => (
-                                <TableRow
-                                    key={user.id}
-                                    sx={{ border: 0 }}
-                                    className='tblrow'
-                                >
+                                <TableRow key={user.id} sx={{ border: 0 }} className='tblrow'>
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{user.id}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.name}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.email}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.role.name}</TableCell>
-                                    {showActionsColumn && (
+                                    {(canAddOrEdit || canDelete) && (
                                         <TableCell align="right">
-                                            {hasPermission([permissions.update]) && (
+                                            {canAddOrEdit && (
                                                 <IconButton
                                                     aria-label="edit"
                                                     color="primary"
                                                     sx={{ color: '#ff9800', '&:hover': { color: '#ffa726' } }}
                                                     className='tblrow action-btn edit'
                                                     id='editbtn'
-                                                    onClick={() => handleClickOpen(user)} // Open dialog with user info
+                                                    onClick={() => handleClickOpen(user)}
                                                 >
                                                     <EditIcon />
                                                 </IconButton>
                                             )}
-                                            {hasPermission([permissions.delete]) && (
+                                            {canDelete && (
                                                 <IconButton
                                                     aria-label="delete"
                                                     color="secondary"

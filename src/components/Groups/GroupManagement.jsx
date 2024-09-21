@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useContext, useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,20 +16,17 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { hasPermission } from '../../utils/permissions.jsx';
-import { permissionsConfig } from '../../config/permissionsConfig.jsx';
-import '../../styles/styles.css';
 import GroupServices from "../../services/groupServices.jsx";
 import SearchContext from "../../contexts/SearchContext.jsx";
+import '../../styles/styles.css';
 
 export default function GroupManagement() {
-
     const [groups, setGroups] = useState([]);
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(true); // New loading state
+    const [loading, setLoading] = useState(true);
     const [newGroup, setNewGroup] = useState({ group_name: '' });
-    const [isEditMode, setIsEditMode] = useState(false); // New state for edit mode
-    const [currentGroup, setCurrentGroup] = useState(null); // State to hold the group being edited
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [currentGroup, setCurrentGroup] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [groupToDelete, setGroupToDelete] = useState(null);
     const { searchQuery } = useContext(SearchContext);
@@ -54,13 +50,16 @@ export default function GroupManagement() {
         getGroups();
     }, []);
 
+    // Role-based access check
+    const userRole = localStorage.getItem('role');
+    const canAddOrEdit = userRole === 'Admin'; // Only admins can add or edit groups
+    const canDelete = userRole === 'Admin'; // Only admins can delete groups
+
     const handleClickOpen = (group = null) => {
         if (group) {
             setIsEditMode(true);
             setCurrentGroup(group);
-            setNewGroup({
-                group_name: group.group_name,
-            });
+            setNewGroup({ group_name: group.group_name });
         } else {
             setIsEditMode(false);
             setNewGroup({ group_name: '' });
@@ -110,12 +109,10 @@ export default function GroupManagement() {
     const handleCancelDelete = () => {
         setOpenDeleteDialog(false);
     };
-    const { permissions } = permissionsConfig.group_management;
-    const showActionsColumn = hasPermission([permissions.update]) || hasPermission([permissions.delete]);
 
     return (
         <div style={{ padding: 20 }}>
-            {!loading && hasPermission([permissions.create]) && (
+            {!loading && canAddOrEdit && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
                     Add Group
                 </Button>
@@ -132,40 +129,36 @@ export default function GroupManagement() {
                             <TableRow className='tblrow'>
                                 <TableCell align="right" className='tabletext tblrow'>ID</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Group Name</TableCell>
-                                {showActionsColumn && (
+                                {(canAddOrEdit || canDelete) && (
                                     <TableCell align="right" className='tabletext tblrow'>Actions</TableCell>
                                 )}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {filteredGroups.map((group) => (
-                                <TableRow
-                                    key={group.id}
-                                    sx={{ border: 0 }}
-                                    className='tblrow'
-                                >
+                                <TableRow key={group.id} sx={{ border: 0 }} className='tblrow'>
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{group.id}</TableCell>
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{group.group_name}</TableCell>
-                                    {showActionsColumn && (
+                                    {(canAddOrEdit || canDelete) && (
                                         <TableCell align="right">
-                                            {hasPermission([permissions.update]) && (
+                                            {canAddOrEdit && (
                                                 <IconButton
                                                     aria-label="edit"
                                                     color="primary"
                                                     sx={{ color: '#ff9800', '&:hover': { color: '#ffa726' } }}
                                                     className='tblrow action-btn edit'
                                                     id='editbtn'
-                                                    onClick={() => handleClickOpen(group)} // Open dialog with group info
+                                                    onClick={() => handleClickOpen(group)}
                                                 >
                                                     <EditIcon />
                                                 </IconButton>
                                             )}
-                                            {hasPermission([permissions.delete]) && (
+                                            {canDelete && (
                                                 <IconButton
                                                     aria-label="delete"
                                                     color="secondary"
                                                     sx={{ color: '#f44336', '&:hover': { color: '#e57373' } }}
-                                                    className='tblrow action-btn delete '
+                                                    className='tblrow action-btn delete'
                                                     id='deletebtn'
                                                     onClick={() => handleDeleteClick(group)}
                                                 >

@@ -148,7 +148,6 @@ export const fetchCurrentUser = async () => {
 
         // Ensure correct access to role and permissions
         localStorage.setItem('role', user.role.name);
-        localStorage.setItem('permissions', JSON.stringify(user.role.permissions)); // Use 'permissions' if that's the key in the response
 
         return user;
     } catch (error) {
