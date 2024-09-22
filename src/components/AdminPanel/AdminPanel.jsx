@@ -9,7 +9,7 @@ export default function AdminPanel() {
     const userRole = localStorage.getItem('role'); // Get the user's role from localStorage
 
     // Check if the user has the admin role
-    if (userRole !== 'admin') {
+    if (userRole !== 'Admin') {
         return <div>You do not have access to this section.</div>;
     }
 

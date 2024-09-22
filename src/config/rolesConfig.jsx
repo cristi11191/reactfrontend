@@ -21,21 +21,21 @@ export const rolesConfig = {
         roles: ['Admin', 'Secretary', 'Student', 'Teacher'], // Multiple roles can access this
     },
     user_management: {
-        label: 'Manage Users',
+        label: 'Users',
         icon: UilUser,
         path: '/users',
         component: UserManagement,
         roles: ['Admin', 'Secretary'], // Only admin and manager can access this
     },
     role_management: {
-        label: 'Role Management',
+        label: 'Roles',
         icon: UilUser,
         path: '/roles',
         component: RoleManagement,
         roles: ['Admin'], // Only admins can manage roles
     },
     group_management: {
-        label: 'Manage Groups',
+        label: 'Groups',
         icon: UilUser,
         path: '/groups',
         component: GroupManagement,
