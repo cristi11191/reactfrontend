@@ -4,6 +4,7 @@ import AdminPanel from '../components/AdminPanel/AdminPanel.jsx';
 import UserManagement from '../components/UserManagements/UserManagement.jsx';
 import GroupManagement from '../components/Groups/GroupManagement.jsx';
 import RoleManagement from "../components/RoleManagement/RoleManagement.jsx";
+import SeriesManagement from "../components/Series/SeriesManagement.jsx";
 
 export const rolesConfig = {
     admin: {
@@ -39,6 +40,13 @@ export const rolesConfig = {
         icon: UilUser,
         path: '/groups',
         component: GroupManagement,
+        roles: ['Admin', 'Secretary'], // Admin and manager roles can access group management
+    },
+    serie_management: {
+        label: 'Series',
+        icon: UilUser,
+        path: '/series',
+        component: SeriesManagement,
         roles: ['Admin', 'Secretary'], // Admin and manager roles can access group management
     },
 

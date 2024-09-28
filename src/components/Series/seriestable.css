@@ -1,0 +1,220 @@
+.tableseries {
+    width: 70vw !important;
+    margin-top: 10px !important;
+    margin-left: 30px;
+    border-collapse: collapse; /* Ensures that borders are collapsed into a single border */
+
+}
+
+.permission-column{
+    max-width: 250px !important;
+}
+
+body .tableseries {
+    background-color: var(--table-background);
+}
+
+body.dark .tableseries {
+    background-color: var(--table-background);
+}
+body .tabletext {
+    color: black;
+}
+
+body.dark .tabletext {
+    color: white;
+}
+
+:root {
+    /* ===== Colors ===== */
+    --edit-btn-color: #0022ff;
+    --delete-btn-color: #f44336;
+    --table-background: #FFF;
+    --text-color-dialog: #000;
+
+    /* ====== Transition ====== */
+    --tran-05: all 0.5s ease;
+    --tran-03: all 0.3s ease;
+    --tran-03: all 0.2s ease;
+}
+
+.action-btn:hover {
+    --delete-btn-color: #e57373;
+}
+
+.action-btn.delete {
+    color: var(--delete-btn-color);
+}
+
+.action-btn.edit {
+    color: var(--edit-btn-color);
+}
+
+body.dark {
+    --edit-btn-color: #ffa726;
+    --delete-btn-color: #f44336;
+    --table-background: rgba(76, 76, 76, 0.67);
+    --text-color-dialog: #ffffff;
+}
+
+/* Add border to table and cells */
+.tableseries, .tableseries th, .tableusers td {
+    border: 1px solid #ddd;
+}
+
+/* Add striped effect */
+.tableseries tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+body.dark .tableseries tbody tr:nth-child(odd) {
+    background-color: #6d6d6d;
+}
+
+/* Add hover effect */
+.tableseries tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+body.dark .tableseries tbody tr:hover {
+    background-color: #555;
+}
+
+.btn-add{
+    margin-left: 30px !important;
+}
+.btn-add.permission{
+    margin-top: 50px !important;
+}
+
+#editbtn,#deletebtn{
+    padding: 4px;
+}
+
+.custom-dialog-paper {
+    background-color: var(--color-background) !important; /* Background color */
+    color: var(--text-color-dialog) !important; /* Text color */
+}
+
+.custom-dialog-title {
+    font-size: 1.5rem; /* Title font size */
+    font-weight: bold; /* Title font weight */
+    color: var(--text-color-dialog) !important; /* Text color */
+}
+
+.custom-textfield .MuiInputBase-input{
+    color: var(--text-color-dialog) !important;
+}
+
+.custom-textfield .MuiFormLabel-root{
+    color: var(--text-color-dialog) !important;
+}
+
+.custom-dialog-actions {
+    background-color: var(--color-background) !important; /* Background color */
+    color: var(--text-color-dialog)
+}
+
+
+
+.custom-dialog-actions .custom-button {
+    font-weight: bold; /* Make text bold */
+    padding: 8px 16px; /* Adjust padding if needed */
+}
+.custom-dialog-actions .custom-cancel-button {
+    color: #1976d2; /* Brighter color for primary button */
+}
+
+.custom-dialog-actions .custom-confirm-button {
+    color: #d32f2f; /* Brighter color for secondary button */
+}
+
+
+#role_id .MuiMenu-paper {
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-dialog) !important;
+}
+
+#role_id .MuiMenu-list {
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-dialog) !important;
+}
+
+#role_id .MuiMenuItem-root {
+    background-color: var(--primary-color) !important;
+    color: var(--text-color-dialog) !important;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list {
+    background-color: var(--color-background) !important;
+}
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root.Mui-selected {
+    color: var(--text-color-dialog) !important;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root {
+    color: var(--text-color-dialog) !important;
+}
+
+.css-e6s3aq-MuiCardHeader-root{
+    background-color: var(--color-background) !important;
+    border-color:  var(--text-color-dialog) !important;
+}
+.css-abna4k-MuiList-root {
+    background-color: var(--color-background) !important;
+}
+
+.css-9mgopn-MuiDivider-root {
+    background-color: var(--color-background) !important;
+}
+.css-et1ao3-MuiTypography-root {
+    color: var(--text-color-dialog) !important;
+}
+.css-83ijpv-MuiTypography-root {
+    color: var(--text-color-dialog) !important;
+}
+
+.css-t0zib5-MuiGrid-root {
+    background-color: var(--color-background) !important;
+}
+
+
+.group-selection-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: var(--color-background);
+}
+
+.group-selection-title {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-color-dialog);
+}
+
+.group-option {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.group-option input[type="checkbox"] {
+    width: 15px; /* Width of checkbox */
+    height: 15px; /* Height of checkbox */
+    margin-right: 10px; /* Space between checkbox and label */
+    cursor: pointer; /* Change cursor to pointer */
+    accent-color: var(--text-color-dialog); /* Change checkbox color */
+}
+
+.group-option label {
+    font-size: 1rem; /* Font size of group name */
+    color: var(--text-color-dialog); /* Text color */
+    cursor: pointer; /* Change cursor to pointer for label */
+}
+
+.group-option:hover {
+    background-color: var(--color-background); /* Change background color on hover */
+    border-radius: 4px; /* Rounded corners on hover */
+}

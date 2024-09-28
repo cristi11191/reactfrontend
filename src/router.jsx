@@ -34,6 +34,10 @@ const router = createBrowserRouter([
             {
                 path: '/groups',
                 element: <ProtectedRoutes element={<MainContent />} role={['Admin', 'Secretary']} />
+            },
+            {
+                path: '/series',
+                element: <ProtectedRoutes element={<MainContent />} role={['Admin', 'Secretary']} />
             }
         ]
     },

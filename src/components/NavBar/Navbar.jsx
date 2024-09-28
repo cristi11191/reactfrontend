@@ -27,6 +27,7 @@ const Navbar = () => {
         rolesConfig.user_management,
         rolesConfig.group_management,
         rolesConfig.role_management,
+        rolesConfig.serie_management,
     ].filter(link => link.roles.includes(currentUserRole));
 
     const handleLogout = () => {
@@ -54,7 +55,7 @@ const Navbar = () => {
                 <ul className="nav-links">
                     {/* Regular non-management links */}
                     {Object.entries(rolesConfig).map(([key, config]) => {
-                        if (config.roles.includes(currentUserRole) && !['user_management', 'group_management', 'role_management'].includes(key)) {
+                        if (config.roles.includes(currentUserRole) && !['user_management', 'group_management', 'role_management', 'serie_management'].includes(key)) {
                             const IconComponent = config.icon;
                             return (
                                 <li key={key}>
