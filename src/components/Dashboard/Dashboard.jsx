@@ -6,9 +6,9 @@ import SemesterGrade from './semestergrade.jsx';
 import './dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function Dashboard() {
+export default function Dashboard({ isSidebarOpen }) {
     return (
-        <div className="d-flex">
+        <div className={`dashboard ${isSidebarOpen ? '' : 'close'} d-flex`}>
             <div className="flex-grow-1">
                 <div className="p-4 text-dashboard">
                     <h2>Welcome back, Cristin!</h2>
@@ -60,13 +60,13 @@ export default function Dashboard() {
 
                         {/* Semester's Grade Section */}
                         <Col md={6}>
-                            <h4>Semester`s Grade</h4>
+                            <h4>Semester's Grade</h4>
                             <SemesterGrade />
                         </Col>
                     </Row>
                 </div>
             </div>
-            <ProfileSidebar/>
+            <ProfileSidebar className="profile-sidebar" />
         </div>
     );
 }

@@ -1,52 +1,87 @@
+/* General Layout */
 body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-    background-color: var(--color-background);
-}
-
-.dashboard {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
     background-color: var(--panel-color);
-    padding: 10px 14px;
+    color: var(--text-color);
     transition: var(--tran-05);
 }
-nav.close ~ .dashboard{
-    left: 73px;
-    width: calc(100% - 73px);
+
+.d-flex {
+    display: flex;
 }
-.dashboard .top{
+
+
+
+/* Profile Sidebar */
+.profile-sidebar {
+    position: fixed;
+    right: 0;
+    left: auto;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: var(--panel-color);
+    padding: 10px;
+    transition: var(--tran-05); /* Smooth transition */
+
+}
+
+.dashboard.close .profile-sidebar {
+    width: 73px; /* Adjust width when sidebar is closed */
+}
+
+/* Dashboard */
+.dashboard {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    left: 0;
+    width: 100%; /* When sidebar is open */
+
+}
+
+.dashboard.close {
+    left: 0;
+    width: 100%; /* Adjusted width when sidebar is closed */
+}
+
+/* Top Bar */
+.top {
     position: fixed;
     top: 0;
-    left: 250px;
-    display: flex;
+    left: 250px; /* When sidebar is open */
     width: calc(100% - 250px);
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 14px;
     background-color: var(--panel-color);
+    padding: 10px 14px;
     transition: var(--tran-05);
     z-index: 10;
 }
-nav.close ~ .dashboard .top{
-    left: 73px;
-    width: calc(100% - 73px);
+
+.top.close {
+    left: 73px; /* Adjusted position when sidebar is closed */
+    width: calc(100% - 73px); /* Adjusted width when sidebar is closed */
 }
-.dashboard .top .sidebar-toggle{
+
+.top .sidebar-toggle {
     font-size: 26px;
     color: var(--text-color);
     cursor: pointer;
 }
-.dashboard .top .search-box{
+
+.top .search-box {
     position: relative;
     height: 45px;
     max-width: 600px;
     width: 100%;
     margin: 0 30px;
 }
-.top .search-box input{
+
+.top .search-box input {
     position: absolute;
     border: 1px solid var(--border-color);
     background-color: var(--panel-color);
@@ -59,7 +94,8 @@ nav.close ~ .dashboard .top{
     font-weight: 400;
     outline: none;
 }
-.top .search-box .nav-imgs{
+
+.top .search-box .nav-imgs {
     position: absolute;
     left: 15px;
     font-size: 22px;
@@ -68,19 +104,40 @@ nav.close ~ .dashboard .top{
     transform: translateY(-50%);
     color: var(--black-light-color);
 }
-.top img{
+
+.top img {
     width: 40px;
     border-radius: 50%;
 }
-.dashboard .dash-content{
+.card-bkgd{
+    background-color: var(--panel-color);
+    color: var(--text-color);
+    transition: var(--tran-05);
+}
+/* Dash Content */
+.dash-content {
+    margin-left: 250px; /* Align content next to the sidebar */
+    width: 100%; /* Content width when sidebar is open */
+    padding: 10px;
+    transition: var(--tran-05);
+}
+
+.dashboard.close .dash-content {
+    margin-left: 73px; /* Shift content when sidebar is closed */
+    width: 100%; /* Content width when sidebar is closed */
+}
+
+.dashboard .dash-content {
     padding-top: 50px;
 }
-.dash-content .title{
+
+.dash-content .title {
     display: flex;
     align-items: center;
     margin: 60px 0 30px 0;
 }
-.dash-content .title .nav-imgs{
+
+.dash-content .title .nav-imgs {
     position: relative;
     height: 35px;
     width: 35px;
@@ -92,63 +149,32 @@ nav.close ~ .dashboard .top{
     justify-content: center;
     font-size: 24px;
 }
-.dash-content .title .text{
+
+.dash-content .title .text {
     font-size: 24px;
     font-weight: 500;
     color: var(--text-color);
     margin-left: 10px;
 }
 
-.dashboard {
-    position: relative;
-    left: 250px; /* Adjusted position when sidebar is open */
-    width: calc(100% - 250px); /* Adjusted width when sidebar is open */
-    transition: var(--tran-05);
-}
-
-.dashboard.close {
-    left: 73px; /* Adjusted position when sidebar is closed */
-    width: calc(100% - 73px); /* Adjusted width when sidebar is closed */
-}
-
-.top {
-    position: fixed;
-    top: 0;
-    left: 250px; /* Adjusted position when sidebar is open */
-    width: calc(100% - 250px); /* Adjusted width when sidebar is open */
-    transition: var(--tran-05);
-}
-
-.top.close {
-    left: 73px; /* Adjusted position when sidebar is closed */
-    width: calc(100% - 73px); /* Adjusted width when sidebar is closed */
-}
-.text-dashboard{
-    color:var(--text-color);
-}
-.card-bkgd{
-    background-color: var(--panel-color);
-    border-radius: 0.5rem; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
+/* Table Styling */
 .table {
-    border-collapse: collapse; /* Collapse borders for a cleaner look */
+    border-collapse: collapse;
     width: 100%; /* Full width */
 }
 
 .table th {
     background-color: var(--color-background); /* Header background color */
-    color:var(--text-color);
+    color: var(--text-color);
     padding: 10px; /* Padding for headers */
-    text-align: left; /* Align text to the left */
+    text-align: left;
 }
 
 .table td {
-    padding: 10px; /* Padding for cells */
+    padding: 10px;
     border: 1px solid #ddd; /* Light border */
     background-color: var(--panel-color);
-    color:var(--text-color);
+    color: var(--text-color);
 }
 
 .table tr:nth-child(even) {
@@ -161,21 +187,16 @@ nav.close ~ .dashboard .top{
 
 .table button {
     background-color: #28a745; /* Button background color */
-    color: white; /* Button text color */
-    border: none; /* Remove border */
-    border-radius: 5px; /* Rounded button corners */
-    padding: 5px 10px; /* Button padding */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
     cursor: pointer; /* Pointer cursor on hover */
 }
 
 .table button:hover {
     background-color: #218838; /* Darker green on hover */
 }
-
-
-
-
-
 
 
 
@@ -187,16 +208,18 @@ nav.close ~ .dashboard .top{
         left: 73px;
         width: calc(100% - 73px);
     }
-    nav.close ~ .dashboard {
+
+    .dashboard.close {
         left: 250px;
         width: calc(100% - 250px);
     }
 
-    .dashboard .top {
+    .top {
         left: 73px;
         width: calc(100% - 73px);
     }
-    nav.close ~ .dashboard .top {
+
+    .top.close {
         left: 250px;
         width: calc(100% - 250px);
     }
@@ -213,16 +236,18 @@ nav.close ~ .dashboard .top{
         left: 60px;
         width: calc(100% - 60px);
     }
-    nav.close ~ .dashboard {
+
+    .dashboard.close {
         left: 200px;
         width: calc(100% - 200px);
     }
 
-    .dashboard .top {
+    .top {
         left: 60px;
         width: calc(100% - 60px);
     }
-    nav.close ~ .dashboard .top {
+
+    .top.close {
         left: 200px;
         width: calc(100% - 200px);
     }
@@ -233,43 +258,24 @@ nav.close ~ .dashboard .top{
     }
 }
 
-/* sidebar */
-/* Dark Mode Styles */
-body.dark-mode .text-dark {
-    color: #f8f9fa !important;
-}
-
-body.dark-mode .text-muted {
-    color: #adb5bd !important;
-}
-
-body.dark-mode .card {
-    background-color: #343a40;
-    border-color: #454d55;
-}
-
-body.dark-mode .list-group-item {
-    background-color: #343a40;
-    border-color: #454d55;
-}
-
-
 /* When the screen width is 560px or less */
 @media (max-width: 560px) {
     .dashboard {
         left: 50px;
         width: calc(100% - 50px);
     }
-    nav.close ~ .dashboard {
+
+    .dashboard.close {
         left: 150px;
         width: calc(100% - 150px);
     }
 
-    .dashboard .top {
+    .top {
         left: 50px;
         width: calc(100% - 50px);
     }
-    nav.close ~ .dashboard .top {
+
+    .top.close {
         left: 150px;
         width: calc(100% - 150px);
     }
@@ -290,16 +296,18 @@ body.dark-mode .list-group-item {
         left: 0;
         width: 100%;
     }
-    nav.close ~ .dashboard {
+
+    .dashboard.close {
         left: 60px;
         width: calc(100% - 60px);
     }
 
-    .dashboard .top {
+    .top {
         left: 0;
         width: 100%;
     }
-    nav.close ~ .dashboard .top {
+
+    .top.close {
         left: 60px;
         width: calc(100% - 60px);
     }
@@ -316,4 +324,23 @@ body.dark-mode .list-group-item {
     .dash-content .title .text {
         font-size: 18px; /* Further adjust title font size */
     }
+}
+
+/* Dark Mode Styles */
+body.dark-mode .text-dark {
+    color: #f8f9fa !important;
+}
+
+body.dark-mode .text-muted {
+    color: #adb5bd !important;
+}
+
+body.dark-mode .card {
+    background-color: #343a40;
+    border-color: #454d55;
+}
+
+body.dark-mode .list-group-item {
+    background-color: #343a40;
+    border-color: #454d55;
 }

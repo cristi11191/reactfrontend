@@ -4,6 +4,7 @@ import '../styles/styles.css'
 import {UilBars} from "@iconscout/react-unicons";
 import SearchBox from "../components/SearchBar/SearchBar.jsx";
 import useSidebar from "../hooks/useSidebar.jsx";
+import '../components/Dashboard/dashboard.css'
 
 export default function DefaultLayout() {
     const [isSidebarOpen, toggleSidebar] = useSidebar();
@@ -21,7 +22,6 @@ export default function DefaultLayout() {
         <section className={`dashboard ${isSidebarOpen ? '' : 'close'}`}>
             <div className={`top ${isSidebarOpen ? '' : 'close'}`}>
                 {/* Use <aside> for the sidebar (Navbar) */}
-
                     <Navbar/>
                 {/* Sidebar toggle button */}
                 <UilBars className="sidebar-toggle" onClick={toggleSidebar}/>
