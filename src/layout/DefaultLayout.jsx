@@ -20,13 +20,18 @@ export default function DefaultLayout() {
     return (
         <section className={`dashboard ${isSidebarOpen ? '' : 'close'}`}>
             <div className={`top ${isSidebarOpen ? '' : 'close'}`}>
-                <Navbar />
+                {/* Use <aside> for the sidebar (Navbar) */}
+
+                    <Navbar/>
+                {/* Sidebar toggle button */}
                 <UilBars className="sidebar-toggle" onClick={toggleSidebar}/>
+                {/* Search Box Component */}
                 <SearchBox/>
             </div>
             <div className="dash-content">
                 <Outlet/>
             </div>
         </section>
+
     )
 }

@@ -1,9 +1,15 @@
-.dashboard{
-    position: relative;
-    left: 250px;
-    background-color: var(--panel-color);
+body {
+    display: flex;
     min-height: 100vh;
-    width: calc(100% - 250px);
+    flex-direction: column;
+    background-color: var(--color-background);
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: var(--panel-color);
     padding: 10px 14px;
     transition: var(--tran-05);
 }
@@ -117,6 +123,61 @@ nav.close ~ .dashboard .top{
     left: 73px; /* Adjusted position when sidebar is closed */
     width: calc(100% - 73px); /* Adjusted width when sidebar is closed */
 }
+.text-dashboard{
+    color:var(--text-color);
+}
+.card-bkgd{
+    background-color: var(--panel-color);
+    border-radius: 0.5rem; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.table {
+    border-collapse: collapse; /* Collapse borders for a cleaner look */
+    width: 100%; /* Full width */
+}
+
+.table th {
+    background-color: var(--color-background); /* Header background color */
+    color:var(--text-color);
+    padding: 10px; /* Padding for headers */
+    text-align: left; /* Align text to the left */
+}
+
+.table td {
+    padding: 10px; /* Padding for cells */
+    border: 1px solid #ddd; /* Light border */
+    background-color: var(--panel-color);
+    color:var(--text-color);
+}
+
+.table tr:nth-child(even) {
+    background-color: var(--panel-color); /* Light gray for even rows */
+}
+
+.table tr:hover {
+    background-color: var(--panel-color); /* Light gray hover effect */
+}
+
+.table button {
+    background-color: #28a745; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded button corners */
+    padding: 5px 10px; /* Button padding */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.table button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+
+
+
+
+
+
 
 /* Media Queries for Responsive Dashboard */
 
@@ -171,6 +232,27 @@ nav.close ~ .dashboard .top{
         margin: 0 20px; /* Adjust margins to fit smaller screens */
     }
 }
+
+/* sidebar */
+/* Dark Mode Styles */
+body.dark-mode .text-dark {
+    color: #f8f9fa !important;
+}
+
+body.dark-mode .text-muted {
+    color: #adb5bd !important;
+}
+
+body.dark-mode .card {
+    background-color: #343a40;
+    border-color: #454d55;
+}
+
+body.dark-mode .list-group-item {
+    background-color: #343a40;
+    border-color: #454d55;
+}
+
 
 /* When the screen width is 560px or less */
 @media (max-width: 560px) {

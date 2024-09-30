@@ -8,6 +8,8 @@ import './styles/styles.css'
 import {DevSupport} from "@react-buddy/ide-toolbox";
 import {ComponentPreviews, useInitial} from "./dev/index.js";
 import {SearchProvider} from "./contexts/SearchContext.jsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(

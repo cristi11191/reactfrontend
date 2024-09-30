@@ -40,24 +40,32 @@ nav.close .logo_name{
     opacity: 0;
     pointer-events: none;
 }
-nav .menu-items{
-    margin-top: 40px;
-    height: calc(100% - 90px);
+nav .menu-items {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    height: 100%;
+    justify-content: flex-start; /* Default, aligns items to the top */
 }
 .menu-items li{
     list-style: none;
 }
-.menu-items li a{
+.menu-items li a {
     display: flex;
     align-items: center;
     height: 50px;
+    padding: 0; /* Add padding for more clickable space */
     text-decoration: none;
     position: relative;
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
 }
-.nav-links li a:hover:before{
+
+.menu-items li a:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Light hover background */
+}
+
+.nav-links li a:hover:before {
     content: "";
     position: absolute;
     left: -7px;
@@ -66,7 +74,9 @@ nav .menu-items{
     border-radius: 50%;
     background-color: var(--primary-color);
 }
-body.dark li a:hover:before{
+
+/* Dark mode hover */
+body.dark li a:hover:before {
     background-color: var(--text-color);
 }
 
@@ -116,7 +126,8 @@ body.dark .nav-links li a:hover .nav-imgs,
 body.dark .nav-links li a:hover .link-name{
     color: var(--text-color);
 }
-.menu-items .logout-mode{
+.menu-items .logout-mode {
+    margin-top: auto;
     padding-top: 10px;
     border-top: 1px solid var(--border-color);
 }
@@ -158,7 +169,9 @@ body.dark .nav-links li a:hover .link-name{
 body.dark .switch:before{
     left: 20px;
 }
-
+.menu-items .mode:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Hover effect */
+}
 /* Media Queries for Responsive Navigation */
 
 /* When the screen width is 1000px or less */
@@ -182,7 +195,7 @@ body.dark .switch:before{
     }
     nav ~ .dashboard {
         left: 73px;
-        width: calc(100% - 73px);
+        width: 98%;
     }
     nav.close ~ .dashboard {
         left: 250px;
@@ -190,7 +203,7 @@ body.dark .switch:before{
     }
     nav .menu-items {
         margin-top: 20px; /* Adjust margin for smaller screens */
-        height: calc(100% - 70px);
+        height: 100%;
     }
 }
 
@@ -207,7 +220,7 @@ body.dark .switch:before{
     }
     nav .menu-items {
         margin-top: 15px;
-        height: calc(100% - 60px);
+        height: 100%;
     }
 }
 
@@ -243,7 +256,7 @@ body.dark .switch:before{
     }
     nav .menu-items {
         margin-top: 10px;
-        height: calc(100% - 50px);
+        height: 100%;
     }
     nav.close li a .link-name {
         display: none; /* Hide text when nav is closed on very small screens */

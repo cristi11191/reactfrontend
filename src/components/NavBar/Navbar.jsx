@@ -43,14 +43,7 @@ const Navbar = () => {
 
     return (
         <nav>
-            <div className="logo-name">
-                <div className="logo-image">
-                    <Avatar alt="Logo" src={logo} />
-                </div>
-                <span className="logo_name" id="username">
-                    {currentUserRole === 'admin' ? 'Administrator' : currentUserRole}
-                </span>
-            </div>
+
             <div className="menu-items">
                 <ul className="nav-links">
                     {/* Regular non-management links */}
