@@ -47,6 +47,22 @@
     width: 100%; /* Takes full width of the container */
 }
 
+.no-access {
+    margin-top: 100px; /* Moves the message down by 100px */
+    text-align: center; /* Centers the text */
+    color: red; /* Makes the message red */
+    font-size: 18px; /* Increases the font size */
+    font-weight: bold; /* Makes the text bold */
+}
+.dash-content .no-access {
+    margin-top: 100px !important; /* Force the margin-top to be applied */
+    color: red !important; /* Make sure the color is applied */
+    text-align: center !important; /* Ensure text is centered */
+    font-size: 18px !important; /* Make sure the font size is larger */
+    font-weight: bold !important; /* Make the text bold */
+}
+
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .counter-row {

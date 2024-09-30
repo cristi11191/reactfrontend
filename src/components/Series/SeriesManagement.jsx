@@ -64,8 +64,8 @@ export default function SeriesManagement() {
     }, []);
 
     const userRole = localStorage.getItem('role');
-    const canAddOrEdit = userRole === 'Admin';
-    const canDelete = userRole === 'Admin';
+    const canAddOrEdit = userRole === 'Admin'  || userRole === 'Secretary';
+    const canDelete = userRole === 'Admin'  || userRole === 'Secretary';
 
     const handleClickOpen = (series = null) => {
         if (series) {

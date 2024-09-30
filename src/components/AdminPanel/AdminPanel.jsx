@@ -2,7 +2,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaClipboardCheck, FaBookOpen, FaFileAlt, FaUserFriends, FaGraduationCap } from 'react-icons/fa';
-import './adminpanel.css'; // Import animation styles
+import './adminpanel.css'; // Import custom styles
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Import FontAwesome icons
 
 export default function AdminPanel() {
@@ -10,11 +10,12 @@ export default function AdminPanel() {
 
     // Check if the user has the admin role
     if (userRole !== 'Admin') {
-        return <div>You do not have access to this section.</div>;
+        return (
+                <div >You do not have access to this section.</div>
+        );
     }
 
-
-    return(
+    return (
         <div>
             <Container fluid>
                 <Row className="counter-row mt-4">
@@ -80,5 +81,5 @@ export default function AdminPanel() {
                 </Row>
             </Container>
         </div>
-    )
+    );
 }

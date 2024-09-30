@@ -52,8 +52,8 @@ export default function GroupManagement() {
 
     // Role-based access check
     const userRole = localStorage.getItem('role');
-    const canAddOrEdit = userRole === 'Admin'; // Only admins can add or edit groups
-    const canDelete = userRole === 'Admin'; // Only admins can delete groups
+    const canAddOrEdit = userRole === 'Admin' || userRole === 'Secretary'; // Only admins can add or edit groups
+    const canDelete = userRole === 'Admin' || userRole === 'Secretary'; // Only admins can delete groups
 
     const handleClickOpen = (group = null) => {
         if (group) {

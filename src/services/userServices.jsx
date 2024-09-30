@@ -50,7 +50,6 @@ export const deleteUserById = async (userId) => {
 export const fetchAllUsers = async () => {
     try {
         const response = await api.get('users');
-        console.log(response);
         return response.data;
     } catch (error) {
         console.error('Error fetching all users:', error);

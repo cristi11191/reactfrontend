@@ -26,7 +26,7 @@ export const rolesConfig = {
         icon: UilUser,
         path: '/users',
         component: UserManagement,
-        roles: ['Admin', 'Secretary'], // Only admin and manager can access this
+        roles: ['Admin'], // Only admin and manager can access this
     },
     role_management: {
         label: 'Roles',

@@ -21,7 +21,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/users',
-                element: <ProtectedRoutes element={<MainContent />} role={['Admin', 'Secretary']} />
+                element: <ProtectedRoutes element={<MainContent />} role={['Admin']} />
             },
             {
                 path: '/roles',

@@ -34,7 +34,10 @@ const ProtectedRoutes = ({ element, role = [] }) => {
     const userHasRole = role.includes(currentUserRole);
 
     if (!userHasRole) {
-        return <div>You do not have access to this section.</div>;
+        return <div
+            style={{marginTop: '100px', color: 'red', textAlign: 'center', fontSize: '18px', fontWeight: 'bold'}}>
+            You do not have access to this section.
+        </div>;
     }
 
     return element;
