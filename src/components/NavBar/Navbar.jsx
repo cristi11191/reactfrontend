@@ -1,10 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import logo from '../../assets/logo.png';
 import { UilBag, UilMoon, UilSignout } from '@iconscout/react-unicons';
 import useDarkMode from '../../hooks/useDarkMode.jsx';
-import Avatar from '@mui/material/Avatar';
 import '../../styles/styles.css';
 import { rolesConfig } from '../../config/rolesConfig.jsx';
 

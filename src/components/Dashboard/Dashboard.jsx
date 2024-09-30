@@ -6,6 +6,7 @@ import SemesterGrade from './semestergrade.jsx';
 import './dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// eslint-disable-next-line react/prop-types
 export default function Dashboard({ isSidebarOpen }) {
     return (
         <div className={`dashboard ${isSidebarOpen ? '' : 'close'} d-flex`}>
