@@ -1,10 +1,20 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Card, ProgressBar, ListGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './dashboard.css';
 import logo from "../../assets/logo.png";
+import {fetchCurrentUser} from "../../services/apiServices.jsx";
 
 const ProfileSidebar = () => {
+    const [userName, setUserName] = useState('');
+
+    useEffect(() => {
+        const getUserData = async () => {
+            const user = await fetchCurrentUser();
+            setUserName(user.name);  // Assuming `name` is a property of the user object
+        };
+        getUserData();
+    }, []);
     return (
         <div className="container-fluid p-3" style={{maxWidth: '300px'}}>
             {/* Profile Information */}
@@ -16,7 +26,7 @@ const ProfileSidebar = () => {
                         className="rounded-circle mb-3"
                         width="80"
                     />
-                    <h5 className="text-dashboard">Shibin Rajan</h5>
+                    <h5 className="text-dashboard">{userName}</h5>
                     <p className="text-dashboard">Student ID: 12345695</p>
                 </Card.Body>
                 <Card.Body>

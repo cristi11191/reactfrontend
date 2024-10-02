@@ -127,20 +127,20 @@ export default function GroupManagement() {
                     <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
                             <TableRow className='tblrow'>
-                                <TableCell align="right" className='tabletext tblrow'>ID</TableCell>
-                                <TableCell align="right" className='tabletext tblrow'>Group Name</TableCell>
+                                <TableCell align="left" className='tabletext tblrow'>ID</TableCell>
+                                <TableCell align="left" className='tabletext tblrow'>Group Name</TableCell>
                                 {(canAddOrEdit || canDelete) && (
-                                    <TableCell align="right" className='tabletext tblrow'>Actions</TableCell>
+                                    <TableCell align="left" className='tabletext tblrow'>Actions</TableCell>
                                 )}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {filteredGroups.map((group) => (
                                 <TableRow key={group.id} sx={{ border: 0 }} className='tblrow'>
-                                    <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{group.id}</TableCell>
-                                    <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{group.group_name}</TableCell>
+                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{group.id}</TableCell>
+                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{group.group_name}</TableCell>
                                     {(canAddOrEdit || canDelete) && (
-                                        <TableCell align="right">
+                                        <TableCell align="left">
                                             {canAddOrEdit && (
                                                 <IconButton
                                                     aria-label="edit"

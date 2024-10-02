@@ -60,6 +60,7 @@ body {
     padding: 10px 14px;
     transition: var(--tran-05);
     z-index: 10;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Modern shadow */
 }
 
 .top.close {
@@ -205,8 +206,8 @@ body {
 /* When the screen width is 1000px or less */
 @media (max-width: 1000px) {
     .dashboard {
-        left: 73px;
-        width: calc(100% - 73px);
+        left: 0;
+        width: 100%;
     }
 
     .dashboard.close {
@@ -261,12 +262,12 @@ body {
 /* When the screen width is 560px or less */
 @media (max-width: 560px) {
     .dashboard {
-        left: 50px;
+        left: 0;
         width: calc(100% - 50px);
     }
 
     .dashboard.close {
-        left: 150px;
+        left: 0;
         width: calc(100% - 150px);
     }
 
@@ -295,6 +296,10 @@ body {
     .dashboard {
         left: 0;
         width: 100%;
+    }
+
+    .profile-sidebar {
+        display: none; /* Hide the sidebar on mobile for more space */
     }
 
     .dashboard.close {

@@ -33,7 +33,7 @@ export default function SeriesManagement() {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [seriesToDelete, setSeriesToDelete] = useState(null);
     const { searchQuery } = useContext(SearchContext);
-
+    const [searchTerm, setSearchTerm] = useState('');
     const filteredSeries = series.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -62,6 +62,11 @@ export default function SeriesManagement() {
         getSeries();
         getGroups();
     }, []);
+
+    const filteredGroups = groups.filter((group) =>
+        group.group_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
 
     const userRole = localStorage.getItem('role');
     const canAddOrEdit = userRole === 'Admin'  || userRole === 'Secretary';
@@ -230,18 +235,30 @@ export default function SeriesManagement() {
                         variant="outlined"
                         className="custom-textfield"
                         value={newSeries.series_name} // Update to newSeries.series_name
-                        onChange={(e) => setNewSeries({...newSeries, series_name: e.target.value})} // Ensure to set series_name
+                        onChange={(e) => setNewSeries({
+                            ...newSeries,
+                            series_name: e.target.value
+                        })} // Ensure to set series_name
                     />
-                    <div className="group-selection-container">
+                    <input
+                        type="text"
+                        placeholder="Search groups..."
+                        className="group-search-input"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <div className="group-selection-list">
                         <p className="group-selection-title">Select Groups:</p>
-                        {groups.map(group => (
+                        {filteredGroups.map(group => (
                             <div key={group.id} className="group-option">
                                 <input
                                     type="checkbox"
                                     checked={newSeries.groups.includes(group.group_name)} // Check if group is selected
+                                    name="group"
+                                    value={group.id}
                                     onChange={() => handleGroupSelection(group.group_name)}
                                 />
-                                <label>{group.group_name}</label>
+                                <label htmlFor={`group-${group.id}`}>{group.group_name}</label>
                             </div>
                         ))}
                     </div>

@@ -1,9 +1,21 @@
 .tableusers {
-    width: 80vw;
-    margin: 20px auto;
+    width: 90%;
+    box-shadow: var(--tran-05); /* Keep your smooth transitions */
+
     border-collapse: collapse;
     background-color: var(--table-background);
     transition: var(--tran-05);
+}
+.tableusers th, .tableusers td {
+
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+.tableusers tbody tr:hover {
+    background-color: #f1f1f1;
+}
+body.dark .tableusers tbody tr:hover {
+    background-color: #555;
 }
 
 .permission-column{
@@ -64,7 +76,6 @@ body.dark {
 
 /* Add border to table and cells */
 .tableusers th, .tableusers td {
-    padding: 12px 20px;
     border: 1px solid #ddd;
     text-align: left;
 }
@@ -191,7 +202,6 @@ body.dark .tableusers tbody tr:hover {
     display: block;
     background-color: var(--primary-color);
     color: white;
-    padding: 10px 20px;
     border: none;
     cursor: pointer;
     transition: var(--tran-03);

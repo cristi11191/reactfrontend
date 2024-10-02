@@ -1,82 +1,57 @@
-/* General Styles for Counter Section */
+/* Admin Panel Enhanced Styles */
+
+/* Counter Section Styling */
 .counter-section {
     display: flex;
-    flex-direction: column; /* Stacks items vertically */
-    align-items: center; /* Centers items horizontally */
-    padding: 20px; /* Adds padding around each counter */
-    text-align: center; /* Centers text inside each counter */
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    background-color: var(--panel-color);
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    margin: 10px;
+    transition: all 0.3s ease-in-out; /* Smooth transitions */
 }
 
-/* Icon Styles */
+.counter-section:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+/* Icon Styling */
 .counter-section i {
-    font-size: 40px; /* Sets a consistent icon size */
-    margin-bottom: 10px; /* Adds spacing below the icon */
-    color: var(--primary-color); /* Use your primary color */
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
 }
 
-/* Counter Number Styles */
+/* Counter Number */
 .counter-number {
-    font-size: 2.5rem; /* Increases font size for the counter */
-    color: #000; /* Sets the color for the number */
-    line-height: 1.2; /* Adjusts line height */
-    font-family: "Oswald", sans-serif; /* Sets font */
-    letter-spacing: 2px; /* Adds letter spacing */
+    font-size: 2rem;
+    color: #000;
+    font-family: "Oswald", sans-serif;
+    letter-spacing: 1px;
 }
 
-/* Counter Title Styles */
+/* Counter Title */
 .counter-title {
-    font-size: 1rem; /* Adjusts title size */
-    letter-spacing: 1px; /* Adjusts letter spacing */
-    text-transform: uppercase; /* Capitalizes text */
-    margin-top: 5px; /* Adds spacing above the title */
-    color: #707070; /* Sets a different color for the title */
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: #707070;
+    letter-spacing: 1px;
 }
 
-/* Container Styles */
-.container {
-    display: flex;
-    justify-content: center; /* Centers the row horizontally */
-    margin-top: 50px; /* Adjust margin for top spacing */
-}
-
-/* Row Styles */
-.counter-row {
-    display: flex;
-    justify-content: space-around; /* Distributes the counters evenly */
-    align-items: center; /* Aligns counters vertically in the center */
-    width: 100%; /* Takes full width of the container */
-}
-
-.no-access {
-    margin-top: 100px; /* Moves the message down by 100px */
-    text-align: center; /* Centers the text */
-    color: red; /* Makes the message red */
-    font-size: 18px; /* Increases the font size */
-    font-weight: bold; /* Makes the text bold */
-}
-.dash-content .no-access {
-    margin-top: 100px !important; /* Force the margin-top to be applied */
-    color: red !important; /* Make sure the color is applied */
-    text-align: center !important; /* Ensure text is centered */
-    font-size: 18px !important; /* Make sure the font size is larger */
-    font-weight: bold !important; /* Make the text bold */
-}
-
-
-/* Responsive Adjustments */
+/* Responsive layout */
 @media (max-width: 768px) {
-    .counter-row {
-        flex-direction: column; /* Stack counters vertically on smaller screens */
-        align-items: center; /* Center items */
-    }
-
     .counter-section {
-        width: 100%; /* Ensures full width on smaller screens */
+        width: 45%;
     }
 }
 
-/* Medium Icon for Additional Styles */
-.medium-icon {
-    font-size: 40px !important; /* Icon size */
-    margin-bottom: 15px !important; /* Space below icon */
+@media (max-width: 480px) {
+    .counter-section {
+        width: 100%;
+        margin: 10px 0;
+    }
 }

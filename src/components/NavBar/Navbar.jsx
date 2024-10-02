@@ -12,7 +12,6 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isManagementOpen, setIsManagementOpen] = useState(false); // State to handle collapse/expand
-
     const currentUserRole = localStorage.getItem('role'); // Retrieve current user role
 
     // Function to toggle collapse state
@@ -40,7 +39,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav>
+        <nav >
 
             <div className="menu-items">
                 <ul className="nav-links">

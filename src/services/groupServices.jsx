@@ -2,8 +2,13 @@ import api from './apiServices.jsx';
 
 const GroupServices = {
     fetchGroup: async () => {
+        try{
         const response = await api.get('/groups');
         return response.data;
+        } catch (error) {
+            console.error('Error fetching all users:', error);
+            throw error;
+        }
     },
 
     getGroupById: async (id) => {

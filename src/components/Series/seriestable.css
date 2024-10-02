@@ -1,5 +1,5 @@
 .tableseries {
-    width: 70vw !important;
+    width: 90% !important;
     margin-top: 10px !important;
     margin-left: 30px;
     border-collapse: collapse; /* Ensures that borders are collapsed into a single border */
@@ -185,6 +185,7 @@ body.dark .tableseries tbody tr:hover {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: var(--color-background);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for better depth */
 }
 
 .group-selection-title {
@@ -194,6 +195,30 @@ body.dark .tableseries tbody tr:hover {
     color: var(--text-color-dialog);
 }
 
+/* Style for search input */
+.group-search-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: var(--color-background);
+    color: var(--text-color);
+}
+
+/* Scrollable group list */
+.group-selection-list {
+    max-height: 200px; /* Fixed height for the list */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: var(--color-background);
+}
+
+/* Group option styling */
 .group-option {
     display: flex;
     align-items: center;
@@ -201,20 +226,19 @@ body.dark .tableseries tbody tr:hover {
 }
 
 .group-option input[type="checkbox"] {
-    width: 15px; /* Width of checkbox */
-    height: 15px; /* Height of checkbox */
-    margin-right: 10px; /* Space between checkbox and label */
-    cursor: pointer; /* Change cursor to pointer */
-    accent-color: var(--text-color-dialog); /* Change checkbox color */
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
 .group-option label {
-    font-size: 1rem; /* Font size of group name */
-    color: var(--text-color-dialog); /* Text color */
-    cursor: pointer; /* Change cursor to pointer for label */
+    font-size: 1rem;
+    color: var(--text-color-dialog);
+    cursor: pointer;
 }
 
 .group-option:hover {
-    background-color: var(--color-background); /* Change background color on hover */
-    border-radius: 4px; /* Rounded corners on hover */
+    background-color: var(--color-background);
+    border-radius: 4px;
 }

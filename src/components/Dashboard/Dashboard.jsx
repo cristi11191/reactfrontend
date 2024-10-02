@@ -1,18 +1,28 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import ProfileSidebar from "./profilesidebar.jsx";
 import {Tab, Tabs, Table, Button, Row, Col} from 'react-bootstrap';
 import Results from './results.jsx';
 import SemesterGrade from './semestergrade.jsx';
 import './dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {fetchCurrentUser} from "../../services/apiServices.jsx";
 
 // eslint-disable-next-line react/prop-types
 export default function Dashboard({ isSidebarOpen }) {
+    const [userName, setUserName] = useState('');
+
+    useEffect(() => {
+        const getUserData = async () => {
+            const user = await fetchCurrentUser();
+            setUserName(user.name);
+        };
+        getUserData();
+    }, []);
     return (
         <div className={`dashboard ${isSidebarOpen ? '' : 'close'} d-flex`}>
             <div className="flex-grow-1">
                 <div className="p-4 text-dashboard">
-                    <h2>Welcome back, Cristin!</h2>
+                    <h2>Welcome back, {userName}!</h2>
                     <p>Tuesday, 29 September 2024</p>
 
                     {/* Upcoming Schedules Section */}
