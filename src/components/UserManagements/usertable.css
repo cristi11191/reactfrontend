@@ -255,3 +255,14 @@ body.dark .tableusers tbody tr:hover {
 .custom-cancel-button:hover {
     background-color: #1257a0;
 }
+
+/* CSS to hide number input spinners */
+.hide-spinner input[type='number']::-webkit-outer-spin-button,
+.hide-spinner input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.hide-spinner input[type='number'] {
+    -moz-appearance: textfield; /* Hide spinners in Firefox */
+}
