@@ -19,6 +19,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import SeriesServices from "../../services/serieServices.jsx";
 import GroupServices from "../../services/groupServices.jsx";
 import SearchContext from "../../contexts/SearchContext.jsx";
+import { Chip } from '@mui/material';
 import '../../styles/styles.css';
 import './seriestable.css';
 
@@ -37,6 +38,7 @@ export default function SeriesManagement() {
     const filteredSeries = series.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
 
     useEffect(() => {
         const getSeries = async () => {
@@ -180,12 +182,16 @@ export default function SeriesManagement() {
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{s.id}</TableCell>
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{s.name}</TableCell>
                                     <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>
-                                        {s.groups && s.groups.length > 0 &&
-                                            s.groups.map(g => {
-                                                const group = groups.find(group => group.group_name === g);
-                                                return group ? group.group_name : null;
-                                            }).filter(name => name).join(', ')
-                                        }
+                                        {s.groups && s.groups.length > 0 && s.groups.map((groupName) => {
+                                            const group = groups.find(g => g.group_name === groupName);
+                                            return group ? (
+                                                <Chip
+                                                    key={group.group_name}
+                                                    label={group.group_name}
+                                                    className="custom-chip"
+                                                />
+                                            ) : null;
+                                        })}
                                     </TableCell>
                                     {(canAddOrEdit || canDelete) && (
                                         <TableCell align="right">
@@ -250,16 +256,12 @@ export default function SeriesManagement() {
                     <div className="group-selection-list">
                         <p className="group-selection-title">Select Groups:</p>
                         {filteredGroups.map(group => (
-                            <div key={group.id} className="group-option">
-                                <input
-                                    type="checkbox"
-                                    checked={newSeries.groups.includes(group.group_name)} // Check if group is selected
-                                    name="group"
-                                    value={group.id}
-                                    onChange={() => handleGroupSelection(group.group_name)}
-                                />
-                                <label htmlFor={`group-${group.id}`}>{group.group_name}</label>
-                            </div>
+                            <Chip
+                                key={group.id}
+                                label={group.group_name}
+                                className={`group-chip ${newSeries.groups.includes(group.group_name) ? 'selected' : ''}`}
+                                onClick={() => handleGroupSelection(group.group_name)}
+                            />
                         ))}
                     </div>
                 </DialogContent>

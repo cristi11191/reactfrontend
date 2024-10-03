@@ -94,6 +94,7 @@ body.dark .tableseries tbody tr:hover {
 .custom-dialog-paper {
     background-color: var(--color-background) !important; /* Background color */
     color: var(--text-color-dialog) !important; /* Text color */
+    width: 25% !important;
 }
 
 .custom-dialog-title {
@@ -179,21 +180,45 @@ body.dark .tableseries tbody tr:hover {
 }
 
 
-.group-selection-container {
-    margin-top: 1rem;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: var(--color-background);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for better depth */
+.tableseries .MuiChip-root {
+    margin: 3px;
+    font-size: 14px;
+}
+.tableseries .MuiChip-label {
+    color: #00796b;
+}
+.tableseries .MuiChip-root:hover {
+    background-color: #b2dfdb;
+}
+.custom-chip {
+    background-color: #e0f7fa; /* Light green background */
+    color: #01b59b;           /* Dark green text color */
+    border-radius: 16px;       /* Rounded corners */
+    margin: 3px;               /* Margin between chips */
+    padding: 5px 10px;         /* Add padding inside the chip */
+    font-weight: bold;         /* Make the text bold */
+    font-size: 12px;           /* Set font size */
 }
 
-.group-selection-title {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: var(--text-color-dialog);
+.custom-chip:hover {
+    background-color: #a5d6a7; /* Darker green on hover */
+    color: white;              /* White text on hover */
 }
+body.dark .custom-chip {
+    background-color: #669ea5; /* Light green background */
+    color: #fff400;           /* Dark green text color */
+    border-radius: 16px;       /* Rounded corners */
+    margin: 3px;               /* Margin between chips */
+    padding: 5px 10px;         /* Add padding inside the chip */
+    font-weight: bold;         /* Make the text bold */
+    font-size: 12px;           /* Set font size */
+}
+
+body.dark .custom-chip:hover {
+    background-color: #9dff9f; /* Darker green on hover */
+    color: #ffffff;              /* White text on hover */
+}
+
 
 /* Style for search input */
 .group-search-input {
@@ -207,38 +232,56 @@ body.dark .tableseries tbody tr:hover {
     background-color: var(--color-background);
     color: var(--text-color);
 }
+.group-selection-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: var(--color-background);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 200px; /* Set a fixed height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: flex;
+    flex-wrap: wrap; /* Allow chips to wrap */
+    gap: 5px; /* Space between the chips */
+
+}
+
+.group-selection-title {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    color: var(--text-color-dialog);
+}
+
+
 
 /* Scrollable group list */
-.group-selection-list {
-    max-height: 200px; /* Fixed height for the list */
-    overflow-y: auto; /* Enable vertical scrolling */
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: var(--color-background);
-}
-
-/* Group option styling */
-.group-option {
-    display: flex;
+.group-chip {
+    margin: 5px;
+    background-color: #e0f7fa; /* Default color */
+    color: #00796b;
+    cursor: pointer;
+    padding: 8px 12px; /* Keep consistent padding for chip size */
+    border-radius: 16px; /* Rounded corners */
+    display: inline-flex;
     align-items: center;
-    padding: 0.5rem 0;
+    justify-content: center;
+    flex: 0 1 60px; /* Make each chip take ~20% of the row's width */
+    max-width: 60px; /* Limit chip's width */
+    min-width: 40px; /* Ensure chips don't shrink too much */
+    text-align: center;
 }
 
-.group-option input[type="checkbox"] {
-    width: 15px;
-    height: 15px;
-    margin-right: 10px;
-    cursor: pointer;
+.group-chip.selected {
+    background-color: #81c784; /* Selected color */
+    color: white;
 }
 
-.group-option label {
-    font-size: 1rem;
-    color: var(--text-color-dialog);
-    cursor: pointer;
-}
-
-.group-option:hover {
-    background-color: var(--color-background);
-    border-radius: 4px;
+.group-selection-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between chips */
+    justify-content: flex-start; /* Align chips to the left */
+    width: 100%; /* Take full width of the container */
 }
