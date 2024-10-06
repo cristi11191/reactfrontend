@@ -16,6 +16,11 @@ const GroupServices = {
         return response.data;
     },
 
+    getGroupByYear: async (year) => {
+        const response = await api.get(`/groups/year/${year}`);
+        return response.data;
+    },
+
     createGroup: async (groupsData) => {
         const response = await api.post('/groups', groupsData);
         return response.data;

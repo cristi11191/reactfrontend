@@ -43,7 +43,6 @@ export const deleteStudentById = async (studentId) => {
         throw error;
     }
 };
-
 // Fetch all students
 export const fetchAllStudents = async () => {
     try {

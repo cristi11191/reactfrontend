@@ -16,30 +16,30 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircularProgress from '@mui/material/CircularProgress';
-import GroupServices from "../../services/groupServices.jsx";
+import FacultiesServices from "../../services/facultyServices.jsx";
 import SearchContext from "../../contexts/SearchContext.jsx";
 import '../../styles/styles.css';
 
-export default function GroupManagement() {
-    const [groups, setGroups] = useState([]);
+export default function FacultiesManagement() {
+    const [faculties, setFaculties] = useState([]);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [newGroup, setNewGroup] = useState({ group_name: '' });
+    const [newFaculty, setNewFaculty] = useState({ group_name: '' });
     const [isEditMode, setIsEditMode] = useState(false);
-    const [currentGroup, setCurrentGroup] = useState(null);
+    const [currentFaculty, setCurrentFaculty] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-    const [groupToDelete, setGroupToDelete] = useState(null);
+    const [facultyToDelete, setFacultyToDelete] = useState(null);
     const { searchQuery } = useContext(SearchContext);
 
-    const filteredGroups = groups.filter(group =>
-        group.group_name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredFaculties = faculties.filter(faculty =>
+        faculty.faculty_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     useEffect(() => {
-        const getGroups = async () => {
+        const getFaculties = async () => {
             try {
-                const groupsData = await GroupServices.fetchGroup();
-                setGroups(groupsData);
+                const groupsData = await FacultiesServices.fetchFaculties();
+                setFaculties(groupsData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -47,7 +47,7 @@ export default function GroupManagement() {
             }
         };
 
-        getGroups();
+        getFaculties();
     }, []);
 
     // Role-based access check
@@ -55,14 +55,14 @@ export default function GroupManagement() {
     const canAddOrEdit = userRole === 'Admin' || userRole === 'Secretary'; // Only admins can add or edit groups
     const canDelete = userRole === 'Admin' || userRole === 'Secretary'; // Only admins can delete groups
 
-    const handleClickOpen = (group = null) => {
-        if (group) {
+    const handleClickOpen = (faculty = null) => {
+        if (faculty) {
             setIsEditMode(true);
-            setCurrentGroup(group);
-            setNewGroup({ group_name: group.group_name });
+            setCurrentFaculty(faculty);
+            setNewFaculty({ faculty_name: faculty.faculty_name, short_name: faculty.short_name }); // Include short_name for editing
         } else {
             setIsEditMode(false);
-            setNewGroup({ group_name: '' });
+            setNewFaculty({ faculty_name: '', short_name: '' });
         }
         setOpen(true);
     };
@@ -70,39 +70,39 @@ export default function GroupManagement() {
     const handleClose = () => {
         setOpen(false);
         setIsEditMode(false);
-        setCurrentGroup(null);
+        setCurrentFaculty(null);
     };
 
-    const handleAddOrUpdateGroup = async () => {
+    const handleAddOrUpdateFaculty = async () => {
         try {
-            if (isEditMode && currentGroup) {
-                await GroupServices.updateGroup(currentGroup.id, newGroup);
+            if (isEditMode && currentFaculty) {
+                await FacultiesServices.updateFaculty(currentFaculty.id, newFaculty);
             } else {
-                await GroupServices.createGroup(newGroup);
+                await FacultiesServices.createFaculty(newFaculty);
             }
-            const updatedGroups = await GroupServices.fetchGroup();
-            setGroups(updatedGroups);
+            const updatedFaculties = await FacultiesServices.fetchFaculties();
+            setFaculties(updatedFaculties);
             handleClose();
         } catch (error) {
             console.error('Error saving group:', error);
         }
     };
 
-    const handleDeleteClick = (group) => {
-        setGroupToDelete(group);
+    const handleDeleteClick = (faculty) => {
+        setFacultyToDelete(faculty);
         setOpenDeleteDialog(true);
     };
 
     const handleConfirmDelete = async () => {
         try {
-            if (groupToDelete) {
-                await GroupServices.deleteGroup(groupToDelete.id);
-                const updatedGroups = await GroupServices.fetchGroup();
-                setGroups(updatedGroups);
+            if (facultyToDelete) {
+                await FacultiesServices.deleteFaculty(facultyToDelete.id);
+                const updatedFaculties = await FacultiesServices.fetchFaculties();
+                setFaculties(updatedFaculties);
             }
             setOpenDeleteDialog(false);
         } catch (error) {
-            console.error('Error deleting group:', error);
+            console.error('Error deleting faculty:', error);
         }
     };
 
@@ -114,7 +114,7 @@ export default function GroupManagement() {
         <div style={{ padding: 20 }}>
             {!loading && canAddOrEdit && (
                 <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
-                    Add Group
+                    Add Faculty
                 </Button>
             )}
 
@@ -128,19 +128,19 @@ export default function GroupManagement() {
                         <TableHead>
                             <TableRow className='tblrow'>
                                 <TableCell align="left" className='tabletext tblrow'>ID</TableCell>
-                                <TableCell align="left" className='tabletext tblrow'>Group Name</TableCell>
-                                <TableCell align="left" className='tabletext tblrow'>Year</TableCell>
+                                <TableCell align="left" className='tabletext tblrow'>Faculty Name</TableCell>
+                                <TableCell align="left" className='tabletext tblrow'>Short Name</TableCell> {/* New Column */}
                                 {(canAddOrEdit || canDelete) && (
                                     <TableCell align="left" className='tabletext tblrow'>Actions</TableCell>
                                 )}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredGroups.map((group) => (
-                                <TableRow key={group.id} sx={{ border: 0 }} className='tblrow'>
-                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{group.id}</TableCell>
-                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{group.group_name}</TableCell>
-                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{group.year}</TableCell>
+                            {filteredFaculties.map((faculty) => (
+                                <TableRow key={faculty.id} sx={{ border: 0 }} className='tblrow'>
+                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{faculty.id}</TableCell>
+                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{faculty.faculty_name}</TableCell>
+                                    <TableCell align="left" component="th" scope="row" className='tabletext tblrow'>{faculty.short_name}</TableCell> {/* Display Short Name */}
                                     {(canAddOrEdit || canDelete) && (
                                         <TableCell align="left">
                                             {canAddOrEdit && (
@@ -150,7 +150,7 @@ export default function GroupManagement() {
                                                     sx={{ color: '#ff9800', '&:hover': { color: '#ffa726' } }}
                                                     className='tblrow action-btn edit'
                                                     id='editbtn'
-                                                    onClick={() => handleClickOpen(group)}
+                                                    onClick={() => handleClickOpen(faculty)}
                                                 >
                                                     <EditIcon />
                                                 </IconButton>
@@ -162,7 +162,7 @@ export default function GroupManagement() {
                                                     sx={{ color: '#f44336', '&:hover': { color: '#e57373' } }}
                                                     className='tblrow action-btn delete'
                                                     id='deletebtn'
-                                                    onClick={() => handleDeleteClick(group)}
+                                                    onClick={() => handleDeleteClick(faculty)}
                                                 >
                                                     <DeleteIcon />
                                                 </IconButton>
@@ -177,36 +177,37 @@ export default function GroupManagement() {
             )}
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ className: 'custom-dialog-paper' }}>
-                <DialogTitle className='custom-dialog-title'>{isEditMode ? 'Edit Group' : 'Add New Group'}</DialogTitle>
+                <DialogTitle className='custom-dialog-title'>{isEditMode ? 'Edit Faculty' : 'Add New Faculty'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="group_name"
-                        label="Group Name"
+                        id="faculty_name"
+                        label="Faculty Name"
                         type="text"
                         fullWidth
                         variant="outlined"
                         className="custom-textfield"
-                        value={newGroup.group_name}
-                        onChange={(e) => setNewGroup({ ...newGroup, group_name: e.target.value })}
+                        value={newFaculty.faculty_name}
+                        onChange={(e) => setNewFaculty({ ...newFaculty, faculty_name: e.target.value })}
                     />
                     <TextField
                         margin="dense"
-                        label="Year"
-                        type="number"
+                        id="short_name"
+                        label="Short Name" // New TextField for short_name
+                        type="text"
                         fullWidth
                         variant="outlined"
-                        className="hide-spinner custom-textfield"
-                        value={newGroup.year}
-                        onChange={(e) => setNewGroup({ ...newGroup, year: e.target.value })}
+                        className="custom-textfield"
+                        value={newFaculty.short_name}
+                        onChange={(e) => setNewFaculty({ ...newFaculty, short_name: e.target.value })}
                     />
                 </DialogContent>
                 <DialogActions className='custom-dialog-actions'>
                     <Button onClick={handleClose} color="primary" className="custom-button custom-cancel-button">
                         Cancel
                     </Button>
-                    <Button onClick={handleAddOrUpdateGroup} color="primary" className="custom-button custom-confirm-button">
+                    <Button onClick={handleAddOrUpdateFaculty} color="primary" className="custom-button custom-confirm-button">
                         {isEditMode ? 'Update' : 'Add'}
                     </Button>
                 </DialogActions>
@@ -215,7 +216,7 @@ export default function GroupManagement() {
             <Dialog open={openDeleteDialog} onClose={handleCancelDelete} PaperProps={{ className: 'custom-dialog-paper' }}>
                 <DialogTitle className='custom-dialog-title'>Confirm Delete</DialogTitle>
                 <DialogContent>
-                    Are you sure you want to delete {groupToDelete?.group_name}?
+                    Are you sure you want to delete {facultyToDelete?.faculty_name}?
                 </DialogContent>
                 <DialogActions className='custom-dialog-actions'>
                     <Button onClick={handleCancelDelete} color="primary" className="custom-button custom-cancel-button">

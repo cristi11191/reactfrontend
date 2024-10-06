@@ -1,9 +1,11 @@
 
 .container{
-    margin-top: 100px
+    margin-top: 100px;
+    z-index: 1000;
 }
 .toast{
-    transition: 0.32s all ease-in-out
+    transition: 0.32s all ease-in-out;
+    z-index: 1000;
 }
 .toast-container--fade{
     right: 0;

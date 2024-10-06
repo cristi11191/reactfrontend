@@ -3,19 +3,28 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog,
     DialogActions, DialogContent, DialogTitle, TextField, IconButton, CircularProgress, MenuItem,
-    Stepper, Step, StepLabel, Box
+    Stepper, Step, StepLabel, Box, Chip, FormControl, InputLabel, Select
 } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchContext from "../../contexts/SearchContext.jsx";
-import { fetchAllUsers, createUser, updateUserById, deleteUserById } from "../../services/userServices.jsx";
+import {
+    fetchAllUsers,
+    createUser,
+    updateUserById,
+    deleteUserById,
+    toggleUserStatusById
+} from "../../services/userServices.jsx";
 import RoleServices from "../../services/roleServices.jsx";
 import '../../styles/styles.css';
 import {createStudent, deleteStudentById, fetchStudentById, updateStudentById} from "../../services/studentService.jsx";
 import GroupServices from "../../services/groupServices.jsx";
 import SeriesServices from "../../services/serieServices.jsx";
+import FacultiesServices from "../../services/facultyServices.jsx"; // Import FacultiesServices
+import SpecialitiesServices from "../../services/specialityServices.jsx"; // Import SpecialitiesServices
 
+import { useToasts } from "../../contexts/ToastContainer.jsx";
 
 export default function UserManagement() {
     const [users, setUsers] = useState([]);
@@ -40,16 +49,33 @@ export default function UserManagement() {
     const [openViewDialog, setOpenViewDialog] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);  // State to store the selected user for viewing
     const [selectedStudentDetails, setSelectedStudentDetails] = useState(null);  // State to store student details
+    const [faculties, setFaculties] = useState([]); // Add faculties state
+    const [specialities, setSpecialities] = useState([]); // Add specialities state
+    const [filteredSpecialities, setFilteredSpecialities] = useState([]);
+    const [openStatusDialog, setOpenStatusDialog] = useState(false); // State for the dialog
+    const [userToToggle, setUserToToggle] = useState(null);
+    const { addToast } = useToasts();
+    const [statusFilter, setStatusFilter] = useState(''); // State for status filter
+    const [roleFilter, setRoleFilter] = useState(''); // State for role filter
+
+    const filterSpecialitiesByFaculty = (facultyId) => {
+        const filtered = specialities.filter(speciality => speciality.faculty_id === facultyId);
+        setFilteredSpecialities(filtered);
+    };
 
 
     const steps = ['User Info', 'Academic Details', 'Personal Details'];
 
 
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.role.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredUsers = users.filter(user => {
+        const matchesQuery = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.role.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus = statusFilter ? (user.status.toString() === statusFilter) : true;
+        const matchesRole = roleFilter ? (user.role.name === roleFilter) : true;
+        return matchesQuery && matchesStatus && matchesRole;
+    });
 
     useEffect(() => {
         const getUsersAndRoles = async () => {
@@ -65,24 +91,31 @@ export default function UserManagement() {
         };
 
         getUsersAndRoles();
-        const fetchGroupsAndSeries = async () => {
+        const fetchAdditionalData  = async () => {
             try {
-                const groupsData = await GroupServices.fetchGroup(); // Fetch groups from backend
-                const seriesData = await SeriesServices.fetchSeries(); // Fetch series from backend
+                const [groupsData, seriesData, facultiesData, specialitiesData] = await Promise.all([
+                    GroupServices.fetchGroup(), // Fetch groups
+                    SeriesServices.fetchSeries(), // Fetch series
+                    FacultiesServices.fetchFaculties(), // Fetch faculties
+                    SpecialitiesServices.fetchSpecialities() // Fetch specialities
+                ]);
                 setGroups(groupsData);
                 setSeries(seriesData);
+                setFaculties(facultiesData); // Set faculties data
+                setSpecialities(specialitiesData); // Set specialities data
+
             } catch (error) {
-                console.error('Error fetching groups/series:', error);
+                console.error('Error fetching groups/series/faculties/specialities:', error);
             }
         };
 
-        fetchGroupsAndSeries();
+        fetchAdditionalData();
     }, []);
 
     // Role-based access check
     const userRole = localStorage.getItem('role');
-    const canAddOrEdit = userRole === 'Admin'; // Only admins can add or edit users
-    const canDelete = userRole === 'Admin'; // Only admins can delete users
+    const canAddOrEdit = userRole === 'Admin' || userRole === 'Secretary'; // Only admins and secretaries can add or edit
+    const canDelete = userRole === 'Admin' || userRole === 'Secretary'; // Only admins and secretaries can delete
 
     const handleClickOpen = async (user = null) => {
         if (user) {
@@ -128,7 +161,7 @@ export default function UserManagement() {
         console.log(user);
 
         // If user is a student, fetch student details
-        if (user.role_id === 4) {
+        if (user.role.name === "Student") {
             try {
                 const studentDetails = await fetchStudentById(user.id); // Assuming student details are tied to user ID
                 setSelectedStudentDetails(studentDetails);
@@ -150,7 +183,7 @@ export default function UserManagement() {
     };
 
     const handleNext = () => {
-        if (newUser.role_id === 4 && activeStep < steps.length - 1) {
+        if (newUser.role.name === "Student" && activeStep < steps.length - 1) {
             setActiveStep((prevStep) => prevStep + 1);
         } else {
             { openViewDialog ? handleClose() : handleAddOrUpdateUser(); }// If role is not student or on final step
@@ -178,17 +211,17 @@ export default function UserManagement() {
                 createdUser = await updateUserById(currentUser.id, userPayload);
 
                 // Update student details if the role is Student
-                if (newUser.role_id === 4) {  // Assuming 4 is the ID for Student
+                if (newUser.role.name === "Student") {  // Assuming 4 is the ID for Student
                     const studentPayload = {
                         user_id: currentUser.id,  // Use existing user ID for update
                         full_name: studentDetails.full_name || newUser.name,
                         student_number: studentDetails.student_number,
-                        group_id: studentDetails.group_id,   // Correct field name
-                        series_id: studentDetails.series_id, // Correct field name
+                        group_id: studentDetails.group_id,
+                        series_id: studentDetails.series_id,
                         year: studentDetails.year,
                         semester: studentDetails.semester,
-                        faculty: studentDetails.faculty,
-                        specialization: studentDetails.specialization,
+                        faculty_id: studentDetails.faculty_id,
+                        speciality_id: studentDetails.speciality_id,
                         date_of_birth: studentDetails.date_of_birth,
                         birth_place: studentDetails.birth_place,
                         address: studentDetails.address,
@@ -200,30 +233,20 @@ export default function UserManagement() {
             } else {
                 // Create user
                 const response = await createUser(userPayload);
-
-                // Extract user from the nested response
                 createdUser = response.data.user;
 
-                // Debugging the response from createUser
-                console.log('Created User:', createdUser);
-
-                // Check if the createdUser has the ID
-                if (!createdUser.id) {
-                    throw new Error('User ID missing from createUser response');
-                }
-
                 // Create student details if the role is Student
-                if (newUser.role_id === 4) {  // Assuming 4 is the ID for Student
+                if (newUser.role.name === "Student") {
                     const studentPayload = {
-                        user_id: createdUser.id,  // Ensure user_id is included from nested data
+                        user_id: createdUser.id,
                         full_name: studentDetails.full_name || newUser.name,
                         student_number: studentDetails.student_number,
-                        group_id: studentDetails.group_id,   // Correct field name
-                        series_id: studentDetails.series_id, // Correct field name
+                        group_id: studentDetails.group_id,
+                        series_id: studentDetails.series_id,
                         year: studentDetails.year,
                         semester: studentDetails.semester,
-                        faculty: studentDetails.faculty,
-                        specialization: studentDetails.specialization,
+                        faculty_id: studentDetails.faculty_id,
+                        speciality_id: studentDetails.speciality_id,
                         date_of_birth: studentDetails.date_of_birth,
                         birth_place: studentDetails.birth_place,
                         address: studentDetails.address,
@@ -257,7 +280,7 @@ export default function UserManagement() {
             if (userToDelete) {
                 await deleteUserById(userToDelete.id);
                 // If the user is a student, delete the corresponding student record
-                if (userToDelete.role_id === 4) {  // Assuming 4 is the Student role ID
+                if (userToDelete.role.name === "Student") {  // Assuming 4 is the Student role ID
                     await deleteStudentById(userToDelete.id);
                 }
 
@@ -276,27 +299,127 @@ export default function UserManagement() {
         setOpenDeleteDialog(false);
     };
 
+    const handleOpenStatusDialog = (user) => {
+        setUserToToggle(user); // Set the user to toggle
+        setOpenStatusDialog(true); // Open the dialog
+    };
+
+    // Close the status dialog
+    const handleCloseStatusDialog = () => {
+        setOpenStatusDialog(false); // Close the dialog
+        setUserToToggle(null); // Clear the user being toggled
+    };
+
+    const handleConfirmToggleStatus = async () => {
+        if (userToToggle) {
+            // Prevent status toggle for Admin users
+            if (userToToggle.role.name === 'Admin') {
+                addToast('error', 'You cannot change the status of an Admin user.', 4000);
+                handleCloseStatusDialog();
+                return; // Exit the function
+            }
+
+            try {
+                // Call the API to toggle the user's status
+                const updatedUser = await toggleUserStatusById(userToToggle.id);
+
+                // Update the users state with the new status
+                setUsers((prevUsers) =>
+                    prevUsers.map((u) =>
+                        u.id === userToToggle.id ? { ...u, status: updatedUser.status } : u
+                    )
+                );
+            } catch (error) {
+                console.error('Error toggling user status:', error);
+            } finally {
+                handleCloseStatusDialog(); // Close the dialog after toggle
+            }
+        }
+    };
+
+
+
+
+    const getChipStyleStatus = (status) => {
+        return status
+            ? { backgroundColor: 'green', color: 'white' }  // Active
+            : { backgroundColor: 'gray', color: 'white' };   // Inactive
+    };
+
+    const getChipStyle = (role) => {
+        switch (role) {
+            case 'Student':
+                return { backgroundColor: 'green', color: 'white' };
+            case 'Teacher':
+                return { backgroundColor: 'blue', color: 'white' };
+            case 'Secretary':
+                return { backgroundColor: 'orange', color: 'white' };
+            case 'Admin':
+                return { backgroundColor: 'red', color: 'white' };
+            default:
+                return { backgroundColor: 'gray', color: 'white' };  // Default color if no role matches
+        }
+    };
+
     return (
-        <div style={{ padding: 20 }}>
-            {!loading && canAddOrEdit && (
-                <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
-                    Add User
-                </Button>
-            )}
+        <div style={{padding: 20}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+                {!loading && canAddOrEdit && (
+                    <Button className='btn-add' variant="contained" color="primary" onClick={() => handleClickOpen()}>
+                        Add User
+                    </Button>
+
+                )}
+                {!loading && (
+                <div style={{display: 'flex', gap: '10px'}}>
+                    <div className="user-filters">
+                        {/* Role filter */}
+                        <FormControl variant="outlined" className="custom-form-control" style={{minWidth: 150}}>
+                            <InputLabel>Filter by Role</InputLabel>
+                            <Select
+                                label="Filter by Role"
+                                value={roleFilter}
+                                onChange={(e) => setRoleFilter(e.target.value)}
+                            >
+                                <MenuItem value="">All Roles</MenuItem>
+                                {roles.map(role => (
+                                    <MenuItem key={role.id} value={role.name}>{role.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        {/* Status filter */}
+                        <FormControl variant="outlined" className="custom-form-control" style={{minWidth: 150}}>
+                            <InputLabel>Filter by Status</InputLabel>
+                            <Select
+                                label="Filter by Status"
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                            >
+                                <MenuItem value="">All Statuses</MenuItem>
+                                <MenuItem value="1">Active</MenuItem>
+                                <MenuItem value="0">Inactive</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                </div>)}
+
+            </div>
 
             {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
-                    <CircularProgress />
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh'}}>
+                    <CircularProgress/>
                 </div>
             ) : (
-                <TableContainer component={Paper} style={{ marginTop: 20 }} className='tableusers'>
-                    <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
+                <TableContainer component={Paper} style={{marginTop: 20}} className='tableusers'>
+                    <Table sx={{minWidth: 650}} size="small" aria-label="simple table">
                         <TableHead>
                             <TableRow className='tblrow'>
                                 <TableCell align="right" className='tabletext tblrow'>ID</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Name</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Email</TableCell>
                                 <TableCell align="right" className='tabletext tblrow'>Role</TableCell>
+                                <TableCell align="right" className='tabletext tblrow'>Status</TableCell>
                                 {(canAddOrEdit || canDelete) && (
                                     <TableCell align="right" className='tabletext tblrow'>Actions</TableCell>
                                 )}
@@ -304,46 +427,61 @@ export default function UserManagement() {
                         </TableHead>
                         <TableBody>
                             {filteredUsers.map((user) => (
-                                <TableRow key={user.id} sx={{ border: 0 }} className='tblrow'>
-                                    <TableCell align="right" component="th" scope="row" className='tabletext tblrow'>{user.id}</TableCell>
+                                <TableRow key={user.id} sx={{border: 0}} className='tblrow'>
+                                    <TableCell align="right" component="th" scope="row"
+                                               className='tabletext tblrow'>{user.id}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.name}</TableCell>
                                     <TableCell align="right" className='tabletext tblrow'>{user.email}</TableCell>
-                                    <TableCell align="right" className='tabletext tblrow'>{user.role.name}</TableCell>
+                                    <TableCell align="right" className='tabletext tblrow'>
+                                        <Chip
+                                            key={user.role.name}
+                                            label={user.role.name}
+                                            className="custom-chip"
+                                            style={getChipStyle(user.role.name)}
+                                        /></TableCell>
+                                    <TableCell align="right" className='tabletext tblrow'> {/* Chip for status */}
+                                        <Chip
+                                            label={user.status ? "Active" : "Inactive"}
+                                            className="custom-chip"
+                                            style={getChipStyleStatus(user.status)}
+                                            onClick={() => handleOpenStatusDialog(user)} // Open confirmation dialog on click
+                                        />
+                                    </TableCell>
                                     {(canAddOrEdit || canDelete) && (
                                         <TableCell align="right">
                                             {/* Eye icon to view user details */}
                                             <IconButton
                                                 aria-label="view"
                                                 color="primary"
-                                                sx={{ color: '#00bfa5', '&:hover': { color: '#26a69a' } }}
+                                                sx={{color: '#00bfa5', '&:hover': {color: '#26a69a'}}}
                                                 className='tblrow action-btn view'
                                                 id='viewbtn'
                                                 onClick={() => handleClickOpenView(user)}
                                             >
-                                                <AssignmentIndIcon />
+                                                <AssignmentIndIcon/>
                                             </IconButton>
                                             {canAddOrEdit && (
                                                 <IconButton
                                                     aria-label="edit"
                                                     color="primary"
-                                                    sx={{ color: '#ff9800', '&:hover': { color: '#ffa726' } }}
+                                                    sx={{color: '#ff9800', '&:hover': {color: '#ffa726'}}}
                                                     className='tblrow action-btn edit'
                                                     id='editbtn'
                                                     onClick={() => handleClickOpen(user)}
                                                 >
-                                                    <EditIcon />
+                                                    <EditIcon/>
                                                 </IconButton>
                                             )}
                                             {canDelete && (
                                                 <IconButton
                                                     aria-label="delete"
                                                     color="secondary"
-                                                    sx={{ color: '#f44336', '&:hover': { color: '#e57373' } }}
+                                                    sx={{color: '#f44336', '&:hover': {color: '#e57373'}}}
                                                     className='tblrow action-btn delete '
                                                     id='deletebtn'
                                                     onClick={() => handleDeleteClick(user)}
                                                 >
-                                                    <DeleteIcon />
+                                                    <DeleteIcon/>
                                                 </IconButton>
                                             )}
                                         </TableCell>
@@ -355,29 +493,50 @@ export default function UserManagement() {
                 </TableContainer>
             )}
 
+            {/* Dialog for confirming status toggle */}
+            <Dialog open={openStatusDialog} onClose={handleCloseStatusDialog}
+                    PaperProps={{className: 'custom-dialog-paper'}}>
+                <DialogTitle>Confirm Status Change</DialogTitle>
+                <DialogContent>
+                    Are you sure you want to change the status of <span
+                    style={{color: 'red', fontWeight: 'bold'}}> {userToToggle?.name}</span>?
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseStatusDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmToggleStatus} color="secondary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
-            <Dialog open={openDeleteDialog} onClose={handleCancelDelete} PaperProps={{ className: 'custom-dialog-paper' }}>
+            <Dialog open={openDeleteDialog} onClose={handleCancelDelete}
+                    PaperProps={{className: 'custom-dialog-paper'}}>
                 <DialogTitle className='custom-dialog-title'>Confirm Delete</DialogTitle>
                 <DialogContent>Are you sure you want to delete {userToDelete?.name}?</DialogContent>
                 <DialogActions className='custom-dialog-actions'>
-                    <Button onClick={handleCancelDelete} color="primary" className="custom-button custom-cancel-button">
+                    <Button onClick={handleCancelDelete} color="primary"
+                            className="custom-button custom-cancel-button">
                         Cancel
                     </Button>
-                    <Button onClick={handleConfirmDelete} color="secondary" className="custom-button custom-confirm-button">
+                    <Button onClick={handleConfirmDelete} color="secondary"
+                            className="custom-button custom-confirm-button">
                         Delete
                     </Button>
                 </DialogActions>
             </Dialog>
 
             {/* Dialog for adding/editing user */}
-            <Dialog open={open} onClose={handleClose} PaperProps={{ className: 'custom-dialog-paper' }}>
-                <DialogTitle className='custom-dialog-title'>{isEditMode ? 'Edit User' : ( openViewDialog === true ? "View user" : 'Add New User' )}</DialogTitle>
+            <Dialog open={open} onClose={handleClose} PaperProps={{className: 'custom-dialog-paper'}}>
+                <DialogTitle
+                    className='custom-dialog-title'>{isEditMode ? 'Edit User' : (openViewDialog === true ? "View user" : 'Add New User')}</DialogTitle>
                 <DialogContent>
                     {/* Conditionally render Stepper for Student role */}
                     {newUser.role_id === 4 && (
                         <Stepper activeStep={activeStep} alternativeLabel>
                             {steps.map((label) => (
-                                <Step key={label}>
+                                <Step key={label} className="step-label">
                                     <StepLabel>{label}</StepLabel>
                                 </Step>
                             ))}
@@ -393,9 +552,10 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={newUser.name || selectedUser?.name || ''}
-                                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                                 autoComplete="new-name"
                             />
                             <TextField
@@ -404,25 +564,27 @@ export default function UserManagement() {
                                 type="email"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={newUser.email || selectedUser?.email || ''}
                                 onChange={handleEmailChange}
                                 error={!!emailError}
                                 helperText={emailError}
-                                style={{ marginBottom: 16 }}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                style={{marginBottom: 16}}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                                 autoComplete="new-email"
                             />
                             {!openViewDialog && (
                                 <TextField
-                                margin="dense"
-                                label="Password"
-                                type="password"
-                                fullWidth
-                                variant="outlined"
-                                value={newUser.password}
-                                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                                autoComplete="new-password"
-                            />
+                                    margin="dense"
+                                    label="Password"
+                                    type="password"
+                                    fullWidth
+                                    variant="outlined"
+                                    className="text-fields-dialog"
+                                    value={newUser.password}
+                                    onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                                    autoComplete="new-password"
+                                />
                             )}
 
                             <TextField
@@ -430,12 +592,13 @@ export default function UserManagement() {
                                 label="Role"
                                 select
                                 fullWidth
+                                className="text-fields-dialog"
                                 value={newUser.role_id || selectedUser?.role_id || ''}
-                                onChange={(e) => setNewUser({ ...newUser, role_id: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setNewUser({...newUser, role_id: e.target.value})}
+                                InputProps={(openViewDialog || isEditMode) ? {readOnly: true} : {}}
                             >
                                 {roles.map((role) => (
-                                    <MenuItem key={role.id} value={role.id}>
+                                    <MenuItem key={role.id} value={role.id} className="text-fields-dialog">
                                         {role.name}
                                     </MenuItem>
                                 ))}
@@ -444,7 +607,7 @@ export default function UserManagement() {
                     )}
 
                     {/* Form for Step 2: Academic Details (only if role is student) */}
-                    {activeStep === 1 && newUser.role_id === 4  && (
+                    {activeStep === 1 && newUser.role_id === 4 && (
                         <>
                             <TextField
                                 margin="dense"
@@ -452,9 +615,13 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.student_number || selectedStudentDetails?.student_number || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, student_number: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({
+                                    ...studentDetails,
+                                    student_number: e.target.value
+                                })}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
 
                             <TextField
@@ -463,10 +630,10 @@ export default function UserManagement() {
                                 type="number"
                                 fullWidth
                                 variant="outlined"
-                                className="hide-spinner"
+                                className="hide-spinner text-fields-dialog"
                                 value={studentDetails.year || selectedStudentDetails?.year || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, year: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, year: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                             <TextField
                                 margin="dense"
@@ -474,10 +641,10 @@ export default function UserManagement() {
                                 type="number"
                                 fullWidth
                                 variant="outlined"
-                                className="hide-spinner"
+                                className="hide-spinner text-fields-dialog"
                                 value={studentDetails.semester || selectedStudentDetails?.semester || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, semester: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, semester: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                             {/* Group Dropdown */}
                             <TextField
@@ -485,12 +652,13 @@ export default function UserManagement() {
                                 label="Group"
                                 select
                                 fullWidth
+                                className="text-fields-dialog"
                                 value={studentDetails.group_id || selectedStudentDetails?.group_id || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, group_id: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, group_id: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             >
                                 {groupsData.map((group) => (
-                                    <MenuItem key={group.id} value={group.id}>
+                                    <MenuItem key={group.id} value={group.id} className="text-fields-dialog">
                                         {group.group_name}
                                     </MenuItem>
                                 ))}
@@ -502,36 +670,72 @@ export default function UserManagement() {
                                 label="Series"
                                 select
                                 fullWidth
+                                className="text-fields-dialog"
                                 value={studentDetails.series_id || selectedStudentDetails?.series_id || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, series_id: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, series_id: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             >
                                 {seriesData.map((series) => (
-                                    <MenuItem key={series.id} value={series.id}>
+                                    <MenuItem key={series.id} value={series.id} className="text-fields-dialog">
                                         {series.name}
                                     </MenuItem>
                                 ))}
                             </TextField>
+                            {/* Faculty Dropdown */}
                             <TextField
                                 margin="dense"
                                 label="Faculty"
-                                type="text"
+                                select
                                 fullWidth
-                                variant="outlined"
-                                value={studentDetails.faculty || selectedStudentDetails?.faculty || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, faculty: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
-                            />
+                                className="text-fields-dialog"
+                                value={faculties.some(faculty => faculty.id === studentDetails.faculty_id) ? studentDetails.faculty_id : ''}
+                                onChange={(e) => {
+                                    const facultyId = e.target.value;
+                                    setStudentDetails({
+                                        ...studentDetails,
+                                        faculty_id: facultyId,
+                                        speciality_id: ''
+                                    }); // Reset speciality when faculty changes
+                                    filterSpecialitiesByFaculty(facultyId); // Call function to filter specialities based on selected faculty
+                                }}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em> {/* Blank option */}
+                                </MenuItem>
+                                {faculties.map((faculty) => (
+                                    <MenuItem key={faculty.id} value={faculty.id} className="text-fields-dialog">
+                                        {faculty.faculty_name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+
+                            {/* Speciality Dropdown */}
                             <TextField
                                 margin="dense"
-                                label="Specialization"
-                                type="text"
+                                label="Speciality"
+                                select
                                 fullWidth
-                                variant="outlined"
-                                value={studentDetails.specialization || selectedStudentDetails?.specialization || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, specialization: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
-                            />
+                                className="text-fields-dialog"
+                                value={filteredSpecialities.some(speciality => speciality.id === studentDetails.speciality_id) ? studentDetails.speciality_id : ''}
+                                onChange={(e) => setStudentDetails({
+                                    ...studentDetails,
+                                    speciality_id: e.target.value
+                                })}
+                                InputProps={(openViewDialog || !studentDetails.faculty_id) ? {readOnly: true} : {}}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em> {/* Blank option */}
+                                </MenuItem>
+                                {filteredSpecialities.map((speciality) => (
+                                    <MenuItem key={speciality.id} value={speciality.id}
+                                              className="text-fields-dialog">
+                                        {speciality.speciality_name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+
+
                         </>
                     )}
 
@@ -544,9 +748,10 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.full_name || selectedStudentDetails?.full_name || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, full_name: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, full_name: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
 
                             <TextField
@@ -554,11 +759,15 @@ export default function UserManagement() {
                                 label="Date of Birth"
                                 type="date"
                                 fullWidth
-                                InputLabelProps={{ shrink: true }}
+                                InputLabelProps={{shrink: true}}
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.date_of_birth || selectedStudentDetails?.date_of_birth || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, date_of_birth: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({
+                                    ...studentDetails,
+                                    date_of_birth: e.target.value
+                                })}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                             <TextField
                                 margin="dense"
@@ -566,9 +775,13 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.birth_place || selectedStudentDetails?.birth_place || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, birth_place: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({
+                                    ...studentDetails,
+                                    birth_place: e.target.value
+                                })}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                             <TextField
                                 margin="dense"
@@ -576,9 +789,10 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.address || selectedStudentDetails?.address || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, address: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, address: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                             <TextField
                                 margin="dense"
@@ -586,9 +800,10 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.city || selectedStudentDetails?.city || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, city: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, city: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                             <TextField
                                 margin="dense"
@@ -596,9 +811,10 @@ export default function UserManagement() {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
+                                className="text-fields-dialog"
                                 value={studentDetails.phone || selectedStudentDetails?.phone || ''}
-                                onChange={(e) => setStudentDetails({ ...studentDetails, phone: e.target.value })}
-                                InputProps={openViewDialog ? { readOnly: true } : {}}
+                                onChange={(e) => setStudentDetails({...studentDetails, phone: e.target.value})}
+                                InputProps={openViewDialog ? {readOnly: true} : {}}
                             />
                         </>
                     )}
@@ -606,9 +822,17 @@ export default function UserManagement() {
                 <DialogActions className='custom-dialog-actions'>
                     {/* For non-student roles, show the Submit button instead of Next */}
                     {newUser.role_id !== 4 ? (
-                        <Button onClick={(openViewDialog ? handleNext : handleAddOrUpdateUser)} color="primary">
-                            Submit
-                        </Button>
+                        <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                            <Button onClick={handleClose} color="primary"
+                                    className="custom-button custom-cancel-button">
+                                Cancel
+                            </Button>
+
+                            <Button onClick={(openViewDialog ? handleNext : handleAddOrUpdateUser)} color="primary">
+                                Submit
+                            </Button>
+                        </Box>
+
                     ) : (
                         <>
                             {activeStep > 0 && (
@@ -618,8 +842,9 @@ export default function UserManagement() {
                             )}
 
                             {/* Flex container to separate the Cancel and Next/Submit buttons */}
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                <Button onClick={handleClose} color="primary" className="custom-button custom-cancel-button">
+                            <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                                <Button onClick={handleClose} color="primary"
+                                        className="custom-button custom-cancel-button">
                                     Cancel
                                 </Button>
 

@@ -13,7 +13,6 @@ export const useToasts = () => {
 // eslint-disable-next-line react/prop-types
 const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
-
     const addToast = useCallback((type, message, duration = 4000) => {
         const id = uuidv4(); // Use uuid for unique key
         setToasts((prevToasts) => [...prevToasts, { id, type, message, duration }]);

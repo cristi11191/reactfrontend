@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { UilBag, UilMoon, UilSignout } from '@iconscout/react-unicons';
+import { UilBag, UilMoon, UilSignout, UilBuilding } from '@iconscout/react-unicons';
 import useDarkMode from '../../hooks/useDarkMode.jsx';
 import '../../styles/styles.css';
 import { rolesConfig } from '../../config/rolesConfig.jsx';
@@ -11,20 +11,33 @@ const Navbar = () => {
     const [isDarkMode, toggleDarkMode] = useDarkMode();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isManagementOpen, setIsManagementOpen] = useState(false); // State to handle collapse/expand
+    const [isManagementOpen, setIsManagementOpen] = useState(false); // State to handle collapse/expand for management
+    const [isUniversityOpen, setIsUniversityOpen] = useState(false); // State to handle collapse/expand for university
     const currentUserRole = localStorage.getItem('role'); // Retrieve current user role
 
-    // Function to toggle collapse state
+    // Function to toggle collapse state for management
     const toggleManagementMenu = () => {
         setIsManagementOpen(!isManagementOpen);
     };
 
-    // Filter out management-related links based on roles
+    // Function to toggle collapse state for university
+    const toggleUniversityMenu = () => {
+        setIsUniversityOpen(!isUniversityOpen);
+    };
+
+    // Management-related links
     const managementLinks = [
         rolesConfig.user_management,
+        rolesConfig.role_management
+    ].filter(link => link.roles.includes(currentUserRole));
+
+    // University-related links
+    const universityLinks = [
         rolesConfig.group_management,
-        rolesConfig.role_management,
         rolesConfig.serie_management,
+        rolesConfig.faculties_management,
+        rolesConfig.specialities_management,
+        rolesConfig.classes_management
     ].filter(link => link.roles.includes(currentUserRole));
 
     const handleLogout = () => {
@@ -39,13 +52,12 @@ const Navbar = () => {
     }
 
     return (
-        <nav >
-
+        <nav>
             <div className="menu-items">
                 <ul className="nav-links">
-                    {/* Regular non-management links */}
+                    {/* Regular non-management and non-university links */}
                     {Object.entries(rolesConfig).map(([key, config]) => {
-                        if (config.roles.includes(currentUserRole) && !['user_management', 'group_management', 'role_management', 'serie_management'].includes(key)) {
+                        if (config.roles.includes(currentUserRole) && !['user_management', 'group_management', 'role_management', 'serie_management', 'faculties_management', 'specialities_management', 'classes_management'].includes(key)) {
                             const IconComponent = config.icon;
                             return (
                                 <li key={key}>
@@ -59,7 +71,29 @@ const Navbar = () => {
                         return null;
                     })}
 
-                    {/* Management menu */}
+                    {/* University tab */}
+                    {universityLinks.length > 0 && (
+                        <li>
+                            <a onClick={toggleUniversityMenu} className="university-toggle link-name">
+                                <UilBuilding className="nav-imgs" />
+                                <span className="link-name">University</span>
+                            </a>
+                            {isUniversityOpen && (
+                                <ul className="collapsed-university-links nav-links">
+                                    {universityLinks.map(link => (
+                                        <li key={link.path}>
+                                            <Link to={link.path}>
+                                                <link.icon className="nav-imgs" />
+                                                <span className="link-name">{link.label}</span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </li>
+                    )}
+
+                    {/* Management tab */}
                     {managementLinks.length > 0 && (
                         <li>
                             <a onClick={toggleManagementMenu} className="management-toggle link-name">
@@ -81,6 +115,8 @@ const Navbar = () => {
                         </li>
                     )}
                 </ul>
+
+                {/* Logout and Dark Mode */}
                 <ul className="logout-mode">
                     <li>
                         <a href="#" onClick={handleLogout}>

@@ -34,6 +34,15 @@ export const updateUserById = async (userId, userData) => {
         throw error;
     }
 };
+export const toggleUserStatusById = async (userId) => {
+    try {
+        const response = await api.patch(`users/${userId}/toggle-status`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        throw error;
+    }
+};
 
 // Delete a user by ID
 export const deleteUserById = async (userId) => {

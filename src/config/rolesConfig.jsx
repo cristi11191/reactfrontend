@@ -1,10 +1,13 @@
-import { UilEstate, UilFilesLandscapes, UilUser } from '@iconscout/react-unicons';
+import {UilBook, UilEstate, UilFilesLandscapes, UilUser} from '@iconscout/react-unicons';
 import Dashboard from '../components/Dashboard/Dashboard.jsx';
 import AdminPanel from '../components/AdminPanel/AdminPanel.jsx';
 import UserManagement from '../components/UserManagements/UserManagement.jsx';
 import GroupManagement from '../components/Groups/GroupManagement.jsx';
 import RoleManagement from "../components/RoleManagement/RoleManagement.jsx";
 import SeriesManagement from "../components/Series/SeriesManagement.jsx";
+import FacultiesManagement from "../components/Faculties/FacultiesManagement.jsx";
+import SpecialitiesManagement from "../components/Specialities/SpecialitiesManagement.jsx";
+import ClassesManagement from "../components/Classes/ClassesManagement.jsx";
 
 export const rolesConfig = {
     admin: {
@@ -47,6 +50,27 @@ export const rolesConfig = {
         icon: UilUser,
         path: '/series',
         component: SeriesManagement,
+        roles: ['Admin', 'Secretary'], // Admin and manager roles can access group management
+    },
+    faculties_management: {
+        label: 'Faculties',
+        icon: UilUser,
+        path: '/faculties',
+        component: FacultiesManagement,
+        roles: ['Admin', 'Secretary'], // Admin and manager roles can access group management
+    },
+    specialities_management: {
+        label: 'Specialities',
+        icon: UilUser,
+        path: '/specialities',
+        component: SpecialitiesManagement,
+        roles: ['Admin', 'Secretary'], // Admin and manager roles can access group management
+    },
+    classes_management: {
+        label: 'Classes',
+        icon: UilBook,
+        path: '/classes',
+        component: ClassesManagement,
         roles: ['Admin', 'Secretary'], // Admin and manager roles can access group management
     },
 

@@ -11,7 +11,8 @@ body{
     margin-top: 100px
 }
 .toast{
-    transition: 0.32s all ease-in-out
+    transition: 0.32s all ease-in-out;
+    z-index: 1000;
 }
 .toast-container--fade{
     right: 0;bottom: 0

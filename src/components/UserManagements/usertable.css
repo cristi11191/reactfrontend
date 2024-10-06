@@ -110,11 +110,6 @@ body.dark .tableusers tbody tr:hover {
     padding: 4px;
 }
 
-.custom-dialog-paper {
-    background-color: var(--color-background) !important; /* Background color */
-    color: var(--text-color-dialog) !important; /* Text color */
-}
-
 .custom-dialog-title {
     font-size: 1.5rem; /* Title font size */
     font-weight: bold; /* Title font weight */
@@ -211,8 +206,8 @@ body.dark .tableusers tbody tr:hover {
 }
 /* Dialog Styling */
 .custom-dialog-paper {
-    background-color: var(--table-background);
-    color: var(--text-color-dialog);
+    background-color: var(--color-background) !important; /* Background color */
+    color: var(--text-color-dialog) !important; /* Text color */
     padding: 20px;
     border-radius: 8px;
 }
@@ -266,3 +261,176 @@ body.dark .tableusers tbody tr:hover {
 .hide-spinner input[type='number'] {
     -moz-appearance: textfield; /* Hide spinners in Firefox */
 }
+
+.custom-chip{
+    height: 25px !important;
+    padding: 0 !important;
+}
+/* Default (Light Mode) */
+.text-fields-dialog {
+    color: black !important; /* Text color for the menu item */
+    background-color: white !important; /* Background color for the menu item in light mode */
+}
+
+
+/* Dark Mode */
+body.dark .text-fields-dialog {
+    color: white !important; /* Text color for dark mode */
+    background-color: #333 !important; /* Background color for the menu item in dark mode */
+}
+
+/* For the input text inside the field */
+.text-fields-dialog input {
+    color: black !important; /* Text inside input field for light mode */
+}
+
+body.dark .text-fields-dialog input {
+    color: white !important; /* Text inside input field for dark mode */
+}
+
+/* For the label (floating label) */
+.text-fields-dialog label {
+    color: black !important; /* Label color for light mode */
+}
+
+body.dark .text-fields-dialog label {
+    color: white !important; /* Label color for dark mode */
+}
+
+/* For the outlined borders (if using Material UI's outlined TextField) */
+.text-fields-dialog .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: black !important; /* Border color for light mode */
+}
+
+body.dark .text-fields-dialog .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: white !important; /* Border color for dark mode */
+}
+/* Selected MenuItem in Light Mode */
+.Mui-selected.text-fields-dialog {
+    background-color: green !important; /* Background color for selected item */
+    color: white !important; /* Text color for selected item */
+}
+
+/* Selected MenuItem in Dark Mode */
+body.dark .Mui-selected.text-fields-dialog {
+    background-color: darkgreen !important; /* Background color for selected item in dark mode */
+    color: white !important; /* Text color for selected item in dark mode */
+}
+
+
+.text-fields-dialog:hover {
+    background-color: lightgray !important; /* Hover color for light mode */
+}
+
+body.dark .text-fields-dialog:hover {
+    background-color: #555 !important; /* Hover color for dark mode */
+}
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    color:black !important;
+}
+body.dark .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    color:white !important;
+}
+/* Light Mode for StepLabel */
+.step-label .MuiStepLabel-label {
+    color: black !important; /* Text color for light mode */
+}
+
+/* Dark Mode for StepLabel */
+body.dark .step-label .MuiStepLabel-label {
+    color: white !important; /* Text color for dark mode */
+}
+
+/* Active Step customization */
+.step-label .MuiStepLabel-active {
+    color: black !important; /* Active step text color for light mode */
+}
+
+body.dark .step-label .MuiStepLabel-active {
+    color: white !important; /* Active step text color for dark mode */
+}
+
+/* Completed Step customization */
+.step-label .MuiStepLabel-completed {
+    color: gray !important; /* Completed step color for light mode */
+}
+
+body.dark .step-label .MuiStepLabel-completed {
+    color: lightgray !important; /* Completed step color for dark mode */
+}
+
+.custom-form-control {
+    margin-top:10px !important;
+    margin-right: 10px;
+
+}
+
+.MuiInputLabel-root {
+    top: -10px !important; /* Adjusts label positioning */
+    color: black; /* Default color for light mode */
+}
+
+/* Dark mode adjustments for label */
+body.dark .MuiInputLabel-root {
+    top: -10px; /* Adjusts label positioning */
+    color: white; /* Change label color to white for dark mode */
+
+}
+
+.MuiSelect-select {
+    padding-top: 0;
+    padding-bottom: 0;
+    display: flex;
+    align-items: center; /* Vertically align selected value */
+    color: black; /* Default color for selected text in light mode */
+}
+
+/* Dark mode adjustments for select text */
+body.dark .MuiSelect-select {
+    padding-top: 0;
+    padding-bottom: 0;
+    display: flex;
+    align-items: center; /* Vertically align selected value */
+    color: white; /* Change selected text color to white for dark mode */
+
+}
+
+.MuiOutlinedInput-root {
+    display: flex;
+    align-items: center; /* Vertically align input */
+    background-color: white; /* Default background for light mode */
+    height: 36px;
+}
+
+/* Dark mode adjustments for outlined input */
+body.dark .MuiOutlinedInput-root {
+    display: flex;
+    align-items: center; /* Vertically align input */
+    background-color: #333; /* Darker background for dark mode */
+    height: 36px;
+}
+
+.MuiOutlinedInput-notchedOutline {
+    border-color: #ccc; /* Default border color in light mode */
+}
+
+/* Dark mode adjustments for notched outline */
+body.dark .MuiOutlinedInput-notchedOutline {
+    border-color: #555; /* Darker border for dark mode */
+}
+
+/* Optional: Adjust button color for dark mode */
+button.btn-add {
+    background-color: blue;
+    color: white;
+}
+
+/* Dark mode adjustments for button */
+body.dark button.btn-add {
+    background-color: #1a73e8;
+    color: white;
+}
+
+
+

@@ -71,7 +71,7 @@ export default function Dashboard({ isSidebarOpen }) {
 
                         {/* Semester's Grade Section */}
                         <Col md={6}>
-                            <h4>Semester's Grade</h4>
+                            <h4>Semester`s Grade</h4>
                             <SemesterGrade />
                         </Col>
                     </Row>

@@ -17,17 +17,24 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Attempt to login
             await login(email, password);
+            // Attempt to login and get the user data (assuming login returns user info)
+            const logedUserData = await fetchCurrentUser();
+            // Check if the user is inactive
+            if (!logedUserData.status) {  // Assuming 'status' is a boolean where true = active, false = inactive
+                throw new Error('User Inactive');
+            }
+
             // Fetch current user data
             await fetchCurrentUser();
+
             // Show success toast message
             addToast('success', 'Successfully Logged In!', 4000);
 
             // Navigate to home page
             navigate('/');
         } catch (error) {
-            const errorMessage = error.message || 'An unknown error occurred.';
+            const errorMessage = error.message === 'User Inactive' ? 'User Inactive' : error.message || 'An unknown error occurred.';
 
             // Log error message to console
             console.error("Error during login:", errorMessage);
